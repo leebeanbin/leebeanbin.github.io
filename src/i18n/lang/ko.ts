@@ -1,0 +1,72 @@
+import type { UIStrings } from "../types";
+
+export default {
+  nav: {
+    home: "홈",
+    posts: "포스트",
+    tags: "태그",
+    projects: "프로젝트",
+    about: "소개",
+    archives: "아카이브",
+    search: "검색",
+  },
+  post: {
+    publishedAt: "게시일",
+    updatedAt: "수정일",
+    sharePostIntro: "이 포스트 공유:",
+    sharePostOn: "{{platform}}에 공유",
+    sharePostViaEmail: "이메일로 공유",
+    tagLabel: "태그",
+    backToTop: "맨 위로",
+    goBack: "뒤로",
+    editPage: "수정하기",
+    previousPost: "이전 포스트",
+    nextPost: "다음 포스트",
+  },
+  pagination: {
+    prev: "이전",
+    next: "다음",
+    page: "페이지",
+  },
+  home: {
+    socialLinks: "소셜 링크",
+    featured: "추천 포스트",
+    recentPosts: "최근 포스트",
+    allPosts: "전체 포스트",
+  },
+  footer: {
+    copyright: "Copyright",
+    allRightsReserved: "All rights reserved.",
+  },
+  pages: {
+    tagTitle: "태그",
+    tagDesc: "이 태그가 붙은 포스트 목록",
+
+    tagsTitle: "태그",
+    tagsDesc: "포스트에 사용된 모든 태그",
+
+    postsTitle: "포스트",
+    postsDesc: "작성한 모든 글",
+
+    archivesTitle: "아카이브",
+    archivesDesc: "모든 포스트 아카이브",
+
+    searchTitle: "검색",
+    searchDesc: "포스트 검색",
+  },
+  a11y: {
+    skipToContent: "본문으로 이동",
+    openMenu: "메뉴 열기",
+    closeMenu: "메뉴 닫기",
+    toggleTheme: "테마 전환",
+    searchPlaceholder: "포스트 검색...",
+    noResults: "검색 결과 없음",
+    goToPreviousPage: "이전 페이지로",
+    goToNextPage: "다음 페이지로",
+  },
+  notFound: {
+    title: "404 Not Found",
+    message: "페이지를 찾을 수 없습니다",
+    goHome: "홈으로 돌아가기",
+  },
+} satisfies UIStrings;

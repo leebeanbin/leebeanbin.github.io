@@ -50,7 +50,7 @@ const isActive = (path: string) => {
   >
     <a
       href={getRelativeLocaleUrl(locale, "")}
-      class="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none"
+      class="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none hover:text-accent transition-colors"
     >
       {site.title}
     </a>
@@ -151,6 +151,17 @@ const isActive = (path: string) => {
             </li>
           )
         }
+        <li class="col-span-1 flex items-center justify-center">
+          <a
+            id="lang-btn"
+            href={locale === "ko" ? `/en${currentPath === "/" ? "" : currentPath}` : currentPath || "/"}
+            class="focus-outline hover:text-accent relative flex size-8 items-center justify-center font-mono text-xs font-semibold"
+            title="Switch language"
+            aria-label="Switch language"
+          >
+            {locale === "ko" ? "EN" : "KO"}
+          </a>
+        </li>
         {
           features.lightAndDarkMode && (
             <li class="col-span-1 flex items-center justify-center">

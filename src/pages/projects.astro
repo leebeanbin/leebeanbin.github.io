@@ -85,14 +85,14 @@ const others = projects.filter(p => !p.featured);
   <Main pageTitle="Projects" pageDesc="실제로 만든 시스템들 — 코드, 설계, 목적이 담겨 있습니다.">
     <section class="mb-10">
       <h2 class="mb-4 text-xl font-semibold">Featured</h2>
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {
           featured.map(p => (
             <a
               href={p.url}
               target="_blank"
               rel="noopener noreferrer"
-              class="border-border hover:border-accent group flex flex-col gap-2 rounded-lg border p-4 transition-colors"
+              class="border-border hover:border-accent group flex flex-col gap-2 rounded-lg border p-4 transition-colors hover:shadow-md"
             >
               <div class="flex items-center justify-between">
                 <span class="font-mono text-sm font-semibold group-hover:text-accent">
@@ -129,14 +129,14 @@ const others = projects.filter(p => !p.featured);
 
     <section>
       <h2 class="mb-4 text-xl font-semibold">More Projects</h2>
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {
           others.map(p => (
             <a
               href={p.url}
               target="_blank"
               rel="noopener noreferrer"
-              class="border-border hover:border-accent group flex flex-col gap-2 rounded-lg border p-4 transition-colors"
+              class="border-border hover:border-accent group flex flex-col gap-2 rounded-lg border p-4 transition-colors hover:shadow-md"
             >
               <div class="flex items-center justify-between">
                 <span class="font-mono text-sm font-semibold group-hover:text-accent">
