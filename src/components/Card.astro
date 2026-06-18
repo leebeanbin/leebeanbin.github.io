@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import { Image } from "astro:assets";
 import { getPostUrl } from "@/utils/getPostPaths";
 import { toTransitionName } from "@/utils/toTransitionName";
+import { getPostCategory } from "@/utils/getPostCategory";
 import Datetime from "./Datetime.astro";
 
 type Props = {
@@ -13,6 +14,7 @@ const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 
 const { title, description, ogImage, tags, ...props } = data;
 const postUrl = getPostUrl(id, filePath, Astro.currentLocale);
+const category = getPostCategory(id);  // 폴더 이름 → 카테고리
 
 const hasImage = !!ogImage;
 const imgSrc = typeof ogImage === "string" ? ogImage : ogImage?.src;
@@ -73,8 +75,13 @@ const imgSrc = typeof ogImage === "string" ? ogImage : ogImage?.src;
         <p class="mt-1.5 text-sm text-muted-foreground line-clamp-2">{description}</p>
       </div>
 
-      <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+      <div class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
         <Datetime {...props} class="text-xs" />
+        {category && (
+          <span class="bg-foreground/8 border border-border rounded px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
+            {category}
+          </span>
+        )}
         {tags.slice(0, 3).map(tag => (
           <span class="bg-accent/10 text-accent rounded px-1.5 py-0.5 font-mono text-xs">
             #{tag}

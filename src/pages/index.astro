@@ -11,8 +11,7 @@ import LinkButton from "@/components/LinkButton.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
-import { siteContent } from "@/data/site";    // ← 콘텐츠는 여기서
-import { projects } from "@/data/projects";   // ← 프로젝트도 여기서
+import { siteContent } from "@/data/site";
 
 const { posts: postsConfig } = config;
 const locale = Astro.currentLocale ?? config.site.lang;
@@ -22,128 +21,55 @@ const homePath = getRelativeLocaleUrl(locale, "");
 const posts = await getCollection("posts");
 const sortedPosts = getSortedPosts(posts);
 const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
-const recentPosts  = sortedPosts.filter(({ data }) => !data.featured);
+const recentPosts   = sortedPosts.filter(({ data }) => !data.featured);
 
-const featuredProjects = projects.filter(p => p.featured);
-const { hero, techStack } = siteContent;
+const { hero } = siteContent;
 ---
 
 <Layout>
   <Header />
-  <main
-    id="main-content"
-    data-layout="index"
-    data-home-path={homePath}
-    class="app-layout"
-  >
+  <main id="main-content" data-layout="index" data-home-path={homePath} class="app-layout">
 
-    <!-- ══ HERO ══════════════════════════════════════════════════════════════ -->
-    <section class="border-border border-b py-16 sm:py-24">
-      <p class="text-sm font-mono text-muted-foreground mb-3 tracking-widest uppercase">
-        {hero.greeting}
-      </p>
-
-      <div class="flex items-end gap-4 flex-wrap mb-2">
-        <h1 class="text-4xl sm:text-6xl font-bold tracking-tight leading-none">
-          {hero.name}
-        </h1>
-        <span class="text-xl sm:text-2xl font-light text-muted-foreground pb-1">
-          {hero.nameEn}
-        </span>
-        <a
-          target="_blank"
-          href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}rss.xml`}
-          aria-label="RSS Feed"
-          class="pb-1"
-        >
-          <IconRss width={18} height={18} class="stroke-muted-foreground hover:stroke-accent transition-colors" />
-          <span class="sr-only">RSS Feed</span>
-        </a>
-      </div>
-
-      <p class="text-accent font-mono text-sm sm:text-base mb-6 tracking-wide">
-        {hero.role}
-      </p>
-
-      <p class="text-base sm:text-lg text-muted-foreground max-w-xl leading-relaxed mb-8">
-        {hero.bio}
-      </p>
-
-      <!-- 기술 스택 칩 -->
-      <div class="flex flex-wrap gap-2 mb-8">
-        {techStack.map(tech => (
-          <span class="border border-border rounded-full px-3 py-1 text-xs font-mono hover:border-accent hover:text-accent transition-colors cursor-default">
-            {tech}
+    <!-- ══ INTRO ════════════════════════════════════════════════════════════ -->
+    <!-- 짧은 소개만 — 상세 프로필은 /about -->
+    <section class="border-b border-border py-10 sm:py-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold mb-2">
+          <span class="lang-ko">{hero.name}</span>
+          <span class="lang-en">{hero.nameEn}</span>
+          <span class="text-muted-foreground font-light text-lg sm:text-xl ml-2">
+            <span class="lang-ko">의 기술 블로그</span>
+            <span class="lang-en">'s dev log</span>
           </span>
-        ))}
+        </h1>
+        <p class="text-sm text-muted-foreground max-w-lg">
+          <span class="lang-ko">{hero.bio}</span>
+          <span class="lang-en">{hero.bioEn}</span>
+        </p>
       </div>
 
-      <!-- CTA 버튼 -->
-      <div class="flex flex-wrap gap-4">
-        <a
-          href="/posts"
-          class="inline-flex items-center gap-2 bg-foreground text-background px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity"
-        >
-          글 읽기 <IconArrowRight class="size-4" />
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="/about"
+           class="border border-border rounded-lg px-3 py-1.5 text-xs font-medium hover:border-accent hover:text-accent transition-colors">
+          <span class="lang-ko">소개</span><span class="lang-en">About</span>
         </a>
-        <a
-          href="/projects"
-          class="inline-flex items-center gap-2 border border-border px-5 py-2.5 rounded-lg text-sm font-medium hover:border-accent hover:text-accent transition-colors"
-        >
-          프로젝트 보기
+        <a href="/projects"
+           class="border border-border rounded-lg px-3 py-1.5 text-xs font-medium hover:border-accent hover:text-accent transition-colors">
+          <span class="lang-ko">프로젝트</span><span class="lang-en">Projects</span>
         </a>
-        <a
-          href="/resume"
-          class="inline-flex items-center gap-2 border border-border px-5 py-2.5 rounded-lg text-sm font-medium hover:border-accent hover:text-accent transition-colors"
-        >
-          이력서
+        <a target="_blank" href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}rss.xml`} aria-label="RSS">
+          <IconRss width={16} height={16} class="stroke-muted-foreground hover:stroke-accent transition-colors" />
         </a>
-      </div>
-    </section>
-
-    <!-- ══ FEATURED PROJECTS (포스트 없을 때 먼저 보여줄 내용) ══════════════ -->
-    <section class="border-border border-b py-12">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-lg font-semibold tracking-wide">주요 프로젝트</h2>
-        <LinkButton
-          href="/projects"
-          class="text-sm text-muted-foreground hover:text-accent transition-colors flex items-center gap-1"
-        >
-          전체 보기 <IconArrowRight class="size-3.5" />
-        </LinkButton>
-      </div>
-
-      <div class="grid gap-3 sm:grid-cols-3">
-        {featuredProjects.map(p => (
-          <a
-            href={p.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group border border-border rounded-xl p-4 flex flex-col gap-3 hover:border-accent transition-colors"
-          >
-            <div class="flex items-start justify-between gap-2">
-              <span class="font-mono text-sm font-semibold group-hover:text-accent transition-colors leading-snug">
-                {p.name}
-              </span>
-              <svg class="size-3.5 shrink-0 mt-0.5 text-muted-foreground group-hover:text-accent transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-              </svg>
-            </div>
-            <p class="text-xs text-muted-foreground leading-relaxed flex-1">{p.desc}</p>
-            <div class="flex flex-wrap gap-1">
-              {p.tags.slice(0, 3).map(tag => (
-                <span class="border border-border rounded px-1.5 py-0.5 font-mono text-xs">{tag}</span>
-              ))}
-            </div>
-          </a>
-        ))}
       </div>
     </section>
 
     <!-- ══ FEATURED POSTS ════════════════════════════════════════════════════ -->
     {featuredPosts.length > 0 && (
-      <section class="border-border border-b py-12">
-        <h2 class="text-lg font-semibold tracking-wide mb-4">{t.home.featured}</h2>
+      <section class="border-b border-border py-10">
+        <h2 class="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-5">
+          <span class="lang-ko">추천 포스트</span>
+          <span class="lang-en">Featured</span>
+        </h2>
         <ul class="space-y-2">
           {featuredPosts.map(data => <Card variant="h3" {...data} />)}
         </ul>
@@ -151,34 +77,42 @@ const { hero, techStack } = siteContent;
     )}
 
     <!-- ══ RECENT POSTS ══════════════════════════════════════════════════════ -->
-    {recentPosts.length > 0 && (
-      <section class="py-12">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold tracking-wide">{t.home.recentPosts}</h2>
-          <LinkButton
-            href={getRelativeLocaleUrl(locale, "posts")}
-            class="text-sm text-muted-foreground hover:text-accent transition-colors flex items-center gap-1"
-          >
-            {t.home.allPosts} <IconArrowRight class="size-3.5" />
+    <section class="py-10">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+          <span class="lang-ko">최근 포스트</span>
+          <span class="lang-en">Recent Posts</span>
+        </h2>
+        {sortedPosts.length > postsConfig.perIndex && (
+          <LinkButton href={getRelativeLocaleUrl(locale, "posts")}
+            class="text-xs text-muted-foreground hover:text-accent flex items-center gap-1">
+            <span class="lang-ko">전체 보기</span>
+            <span class="lang-en">All posts</span>
+            <IconArrowRight class="size-3" />
           </LinkButton>
-        </div>
+        )}
+      </div>
+
+      {recentPosts.length > 0 ? (
         <ul class="space-y-2">
           {recentPosts.slice(0, postsConfig.perIndex).map(data => (
             <Card variant="h3" {...data} />
           ))}
         </ul>
-      </section>
-    )}
-
-    <!-- 포스트가 아직 없을 때 -->
-    {sortedPosts.length === 0 && (
-      <section class="py-16 text-center text-muted-foreground">
-        <p class="text-lg mb-2">아직 작성된 글이 없습니다.</p>
-        <p class="text-sm">
-          <code class="bg-muted px-2 py-1 rounded text-xs">src/content/posts/</code>에 마크다운 파일을 추가하면 바로 표시됩니다.
-        </p>
-      </section>
-    )}
+      ) : (
+        <div class="py-12 text-center border border-dashed border-border rounded-xl">
+          <p class="text-muted-foreground text-sm mb-1">
+            <span class="lang-ko">아직 작성된 글이 없습니다.</span>
+            <span class="lang-en">No posts yet.</span>
+          </p>
+          <p class="text-xs text-muted-foreground">
+            <code class="bg-muted px-1.5 py-0.5 rounded">src/content/posts/</code>
+            <span class="lang-ko">에 마크다운 파일을 추가하면 바로 표시됩니다.</span>
+            <span class="lang-en"> — add a markdown file to get started.</span>
+          </p>
+        </div>
+      )}
+    </section>
 
   </main>
   <Footer />

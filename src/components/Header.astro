@@ -73,48 +73,28 @@ const isActive = (path: string) => {
         class="[&>li>a]:hover:text-accent mt-4 hidden w-44 grid-cols-2 place-content-center gap-2 sm:mt-0 sm:flex sm:w-auto sm:gap-x-5 sm:gap-y-0 sm:[&>li]:h-8 [&>li>a]:block [&>li>a]:px-4 [&>li>a]:py-3 [&>li>a]:text-center [&>li>a]:font-medium sm:[&>li>a]:px-2 sm:[&>li>a]:py-1"
       >
         <li class="col-span-2">
-          <a
-            href={getRelativeLocaleUrl(locale, "posts")}
-            class:list={{ "active-nav": isActive("/posts") }}
-            data-i18n="nav.posts"
-          >
-            {t.nav.posts}
+          <a href={getRelativeLocaleUrl(locale, "posts")} class:list={{ "active-nav": isActive("/posts") }}>
+            <span class="lang-ko">포스트</span><span class="lang-en">Posts</span>
           </a>
         </li>
         <li class="col-span-2">
-          <a
-            href={getRelativeLocaleUrl(locale, "tags")}
-            class:list={{ "active-nav": isActive("/tags") }}
-            data-i18n="nav.tags"
-          >
-            {t.nav.tags}
+          <a href={getRelativeLocaleUrl(locale, "tags")} class:list={{ "active-nav": isActive("/tags") }}>
+            <span class="lang-ko">태그</span><span class="lang-en">Tags</span>
           </a>
         </li>
         <li class="col-span-2">
-          <a
-            href={getRelativeLocaleUrl(locale, "projects")}
-            class:list={{ "active-nav": isActive("/projects") }}
-            data-i18n="nav.projects"
-          >
-            {t.nav.projects}
+          <a href={getRelativeLocaleUrl(locale, "projects")} class:list={{ "active-nav": isActive("/projects") }}>
+            <span class="lang-ko">프로젝트</span><span class="lang-en">Projects</span>
           </a>
         </li>
         <li class="col-span-2">
-          <a
-            href={getRelativeLocaleUrl(locale, "about")}
-            class:list={{ "active-nav": isActive("/about") }}
-            data-i18n="nav.about"
-          >
-            {t.nav.about}
+          <a href={getRelativeLocaleUrl(locale, "about")} class:list={{ "active-nav": isActive("/about") }}>
+            <span class="lang-ko">소개</span><span class="lang-en">About</span>
           </a>
         </li>
         <li class="col-span-2">
-          <a
-            href="/resume"
-            class:list={{ "active-nav": isActive("/resume") }}
-            data-i18n="nav.resume"
-          >
-            이력서
+          <a href="/resume" class:list={{ "active-nav": isActive("/resume") }}>
+            <span class="lang-ko">이력서</span><span class="lang-en">Resume</span>
           </a>
         </li>
         {
@@ -218,29 +198,11 @@ const isActive = (path: string) => {
     });
   }
 
-  // ── KO/EN 클라이언트 토글 ─────────────────────────────────────────────────
-  const KO: Record<string, string> = {
-    "nav.posts": "포스트",
-    "nav.tags": "태그",
-    "nav.projects": "프로젝트",
-    "nav.about": "소개",
-    "nav.resume": "이력서",
-  };
-
-  const EN: Record<string, string> = {
-    "nav.posts": "Posts",
-    "nav.tags": "Tags",
-    "nav.projects": "Projects",
-    "nav.about": "About",
-    "nav.resume": "Resume",
-  };
-
+  // ── KO/EN 전환: html[data-lang] CSS 방식 ────────────────────────────────
+  // global.css에서 html[data-lang="en"] .lang-ko { display:none } 처리.
+  // 이 JS는 html 속성 + 라벨만 관리.
   function applyLang(lang: "ko" | "en") {
-    const map = lang === "en" ? EN : KO;
-    document.querySelectorAll<HTMLElement>("[data-i18n]").forEach(el => {
-      const key = el.dataset.i18n!;
-      if (map[key]) el.textContent = map[key];
-    });
+    document.documentElement.setAttribute("data-lang", lang);
     const label = document.querySelector("#lang-label");
     if (label) label.textContent = lang === "ko" ? "EN" : "KO";
   }

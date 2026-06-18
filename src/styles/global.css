@@ -36,3 +36,10 @@
 :target {
   scroll-margin-block: 1rem;
 }
+
+/* ── i18n: CSS 방식 언어 전환 ──────────────────────────────────────────────
+   html에 data-lang="ko" (기본) 또는 data-lang="en" 을 JS로 설정.
+   .lang-ko 요소 → 한국어 표시, .lang-en 요소 → 영어 표시           */
+html[data-lang="en"] .lang-ko { display: none !important; }
+html[data-lang="ko"] .lang-en { display: none !important; }
+/* 초기 깜박임 방지: JS 실행 전엔 한국어가 기본 표시됨 */
