@@ -1,79 +1,13 @@
 ---
+// 프로젝트 목록 수정: src/data/projects.ts 만 편집하면 됩니다.
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
-import Breadcrumb from "@/components/Breadcrumb.astro";
-import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
 import config from "@/config";
-
-const projects = [
-  {
-    name: "beanllm",
-    url: "https://github.com/leebeanbin/beanllm",
-    desc: "멀티 프로바이더 LLM 통합 라이브러리 — OpenAI / Anthropic / Google / Ollama를 단일 인터페이스로 통합",
-    tags: ["Python", "LLM", "OpenAI", "Anthropic", "Ollama"],
-    featured: true,
-  },
-  {
-    name: "umai",
-    url: "https://github.com/leebeanbin/umai",
-    desc: "채팅 · RAG · 워크플로우 · 파인튜닝 풀스택 AI 플랫폼",
-    tags: ["Python", "FastAPI", "Next.js", "RAG", "LangChain"],
-    featured: true,
-  },
-  {
-    name: "mariabean",
-    url: "https://github.com/leebeanbin/mariabean",
-    desc: "DDD + Hexagonal Architecture 기반 공간예약 플랫폼 — 이벤트 소싱, Kafka, Elasticsearch 통합",
-    tags: ["Spring Boot", "Kotlin", "Kafka", "Elasticsearch", "DDD"],
-    featured: true,
-  },
-  {
-    name: "beanCli",
-    url: "https://github.com/leebeanbin/beanCli",
-    desc: "TUI 기반 실시간 스트리밍 데이터 콘솔 — Kafka 토픽을 터미널에서 바로 시각화",
-    tags: ["TypeScript", "Kafka", "PostgreSQL", "TUI"],
-    featured: false,
-  },
-  {
-    name: "message-broker-comparison-lab",
-    url: "https://github.com/leebeanbin/message-broker-comparison-lab",
-    desc: "Redis · RabbitMQ · Kafka 벤치마크 비교 분석 — Jupyter Notebook 18개 수록",
-    tags: ["Python", "FastAPI", "Jupyter", "Kafka", "Redis", "RabbitMQ"],
-    featured: false,
-  },
-  {
-    name: "insightstock-ai-service",
-    url: "https://github.com/leebeanbin/insightstock-ai-service",
-    desc: "주식 데이터 기반 AI 분석 서비스 — GPT-4, Claude, Gemini 다중 모델 지원",
-    tags: ["Python", "FastAPI", "LLM", "Finance"],
-    featured: false,
-  },
-  {
-    name: "WhereAmI",
-    url: "https://github.com/leebeanbin/WhereAmI",
-    desc: "실시간 위치 공유 PWA — 그룹 트래킹, 알림, 오프라인 지원",
-    tags: ["TypeScript", "React", "PWA", "WebSocket"],
-    featured: false,
-  },
-  {
-    name: "mariabean-client",
-    url: "https://github.com/leebeanbin/mariabean-client",
-    desc: "mariabean 예약 플랫폼 프론트엔드 — Next.js 기반 관리자 + 사용자 UI",
-    tags: ["Next.js", "React", "TypeScript"],
-    featured: false,
-  },
-  {
-    name: "dinobot",
-    url: "https://github.com/leebeanbin/dinobot",
-    desc: "Discord 밋업 알림 봇 — 개발자 커뮤니티 이벤트 자동 수집 및 공유",
-    tags: ["TypeScript", "Discord.js", "Node.js"],
-    featured: false,
-  },
-];
+import { projects } from "@/data/projects";
 
 const featured = projects.filter(p => p.featured);
-const others = projects.filter(p => !p.featured);
+const others   = projects.filter(p => !p.featured);
 ---
 
 <Layout
@@ -81,95 +15,99 @@ const others = projects.filter(p => !p.featured);
   description="leebeanbin의 포트폴리오 프로젝트 — AI, 백엔드, 풀스택 시스템"
 >
   <Header />
-  <Breadcrumb />
-  <Main pageTitle="Projects" pageDesc="실제로 만든 시스템들 — 코드, 설계, 목적이 담겨 있습니다.">
-    <section class="mb-10">
-      <h2 class="mb-4 text-xl font-semibold">Featured</h2>
-      <div class="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {
-          featured.map(p => (
-            <a
-              href={p.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="border-border hover:border-accent group flex flex-col gap-2 rounded-lg border p-4 transition-colors hover:shadow-md"
-            >
-              <div class="flex items-center justify-between">
-                <span class="font-mono text-sm font-semibold group-hover:text-accent">
+
+  <main id="main-content" class="app-layout py-12 sm:py-16">
+
+    <!-- 페이지 헤더 -->
+    <div class="border-b border-border pb-8 mb-10">
+      <p class="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2">Portfolio</p>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-3">Projects</h1>
+      <p class="text-muted-foreground max-w-xl">
+        직접 설계하고 만든 시스템들 — 코드, 구조, 그리고 만든 이유가 담겨 있습니다.
+      </p>
+    </div>
+
+    <!-- Featured -->
+    <section class="mb-14">
+      <h2 class="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-5">Featured</h2>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {featured.map(p => (
+          <a
+            href={p.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex flex-col border border-border rounded-xl p-5 gap-4 hover:border-accent transition-all hover:shadow-sm"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="font-mono font-semibold text-base group-hover:text-accent transition-colors">
                   {p.name}
-                </span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="size-4 opacity-50 group-hover:opacity-100"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                  />
-                </svg>
-              </div>
-              <p class="text-sm opacity-75">{p.desc}</p>
-              <div class="mt-auto flex flex-wrap gap-1 pt-2">
-                {p.tags.map(tag => (
-                  <span class="bg-accent/10 text-accent rounded px-1.5 py-0.5 font-mono text-xs">
-                    {tag}
+                </p>
+                {p.status === "active" && (
+                  <span class="inline-flex items-center gap-1 text-xs text-green-500 mt-0.5">
+                    <span class="inline-block size-1.5 rounded-full bg-green-500"></span>
+                    active
                   </span>
-                ))}
+                )}
               </div>
-            </a>
-          ))
-        }
+              <svg class="size-4 shrink-0 mt-0.5 text-muted-foreground group-hover:text-accent transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </div>
+
+            <div class="flex-1">
+              <p class="text-sm font-medium mb-1">{p.desc}</p>
+              {p.longDesc && (
+                <p class="text-xs text-muted-foreground leading-relaxed">{p.longDesc}</p>
+              )}
+            </div>
+
+            <div class="flex flex-wrap gap-1.5">
+              {p.tags.map(tag => (
+                <span class="border border-border rounded-full px-2.5 py-0.5 font-mono text-xs group-hover:border-accent/50 transition-colors">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </a>
+        ))}
       </div>
     </section>
 
+    <!-- More Projects — 리스트 형태 -->
     <section>
-      <h2 class="mb-4 text-xl font-semibold">More Projects</h2>
-      <div class="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {
-          others.map(p => (
-            <a
-              href={p.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="border-border hover:border-accent group flex flex-col gap-2 rounded-lg border p-4 transition-colors hover:shadow-md"
-            >
-              <div class="flex items-center justify-between">
-                <span class="font-mono text-sm font-semibold group-hover:text-accent">
-                  {p.name}
-                </span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="size-4 opacity-50 group-hover:opacity-100"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                  />
-                </svg>
-              </div>
-              <p class="text-sm opacity-75">{p.desc}</p>
-              <div class="mt-auto flex flex-wrap gap-1 pt-2">
-                {p.tags.map(tag => (
-                  <span class="bg-accent/10 text-accent rounded px-1.5 py-0.5 font-mono text-xs">
-                    {tag}
-                  </span>
+      <h2 class="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-5">More</h2>
+      <div class="divide-y divide-border">
+        {others.map(p => (
+          <a
+            href={p.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex items-center justify-between gap-4 py-4 hover:text-accent transition-colors"
+          >
+            <div class="flex items-baseline gap-3 min-w-0">
+              <span class="font-mono text-sm font-semibold shrink-0 group-hover:text-accent transition-colors">
+                {p.name}
+              </span>
+              <span class="text-sm text-muted-foreground truncate hidden sm:block">
+                {p.desc}
+              </span>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <div class="hidden sm:flex flex-wrap gap-1 justify-end">
+                {p.tags.slice(0, 2).map(tag => (
+                  <span class="border border-border rounded px-2 py-0.5 font-mono text-xs">{tag}</span>
                 ))}
               </div>
-            </a>
-          ))
-        }
+              <svg class="size-4 text-muted-foreground group-hover:text-accent transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </div>
+          </a>
+        ))}
       </div>
     </section>
-  </Main>
+
+  </main>
   <Footer />
 </Layout>

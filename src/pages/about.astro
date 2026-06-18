@@ -1,36 +1,127 @@
 ---
-import { getEntry, render } from "astro:content";
+// 소개 내용 수정: src/data/site.ts → about.ko / about.en 섹션을 편집하세요.
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
-import Breadcrumb from "@/components/Breadcrumb.astro";
-import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
 import config from "@/config";
+import { siteContent } from "@/data/site";
+import { resume } from "@/data/resume";
 
-const about = await getEntry("pages", "about");
+const { about, hero } = siteContent;
+const { name, contact } = resume;
 
-if (!about) {
-  throw new Error(
-    "Missing content entry: `about.md` or `about.mdx` in `src/content/pages/`"
-  );
-}
-
-const { Content } = await render(about);
+// JSON으로 직렬화해서 클라이언트에 전달
+const paragraphsKo = JSON.stringify(about.ko);
+const paragraphsEn = JSON.stringify(about.en);
 ---
 
 <Layout
-  title={`${about.data.title} | ${config.site.title}`}
-  description={about.data.description}
-  ogImage={about.data.ogImage}
-  canonicalURL={about.data.canonicalURL}
+  title={`소개 | ${config.site.title}`}
+  description={`${name.ko} (${name.en}) — AI/Backend Engineer`}
 >
   <Header />
 
-  <Breadcrumb />
+  <main id="main-content" class="app-layout py-12 sm:py-16">
 
-  <Main pageTitle={about.data.title} class="app-prose">
-    <Content />
-  </Main>
+    <!-- 헤더 -->
+    <div class="border-b border-border pb-10 mb-10">
+      <p class="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">About</p>
+      <div class="flex flex-wrap items-baseline gap-3 mb-1">
+        <h1 class="text-3xl sm:text-4xl font-bold">{name.ko}</h1>
+        <span class="text-xl text-muted-foreground font-light">{name.en}</span>
+      </div>
+      <p class="text-accent font-mono text-sm mt-1">{hero.role}</p>
+    </div>
 
+    <!-- 소개 문단 (한/영 전환) -->
+    <section class="mb-12 max-w-2xl">
+      <div id="about-paragraphs" class="space-y-4"
+        data-ko={paragraphsKo}
+        data-en={paragraphsEn}
+      >
+        {about.ko.map(p => (
+          <p class="text-base leading-relaxed text-muted-foreground">{p}</p>
+        ))}
+      </div>
+    </section>
+
+    <!-- 기술 스택 -->
+    <section class="mb-12">
+      <h2 class="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-6">Skills</h2>
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {about.skillGroups.map(group => (
+          <div class="border border-border rounded-xl p-4">
+            <p class="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-3">
+              {group.label}
+            </p>
+            <div class="flex flex-wrap gap-1.5">
+              {group.items.map(item => (
+                <span class="border border-border rounded-full px-2.5 py-0.5 text-xs font-mono hover:border-accent transition-colors cursor-default">
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 연락처 -->
+    <section>
+      <h2 class="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-6">Contact</h2>
+      <div class="flex flex-wrap gap-3">
+        <a href={`mailto:${contact.email}`}
+           class="flex items-center gap-2 border border-border rounded-lg px-4 py-2.5 text-sm hover:border-accent hover:text-accent transition-colors">
+          <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          {contact.email}
+        </a>
+        <a href={contact.github} target="_blank" rel="noopener"
+           class="flex items-center gap-2 border border-border rounded-lg px-4 py-2.5 text-sm hover:border-accent hover:text-accent transition-colors">
+          <svg class="size-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          GitHub
+        </a>
+        <a href="/resume"
+           class="flex items-center gap-2 border border-border rounded-lg px-4 py-2.5 text-sm hover:border-accent hover:text-accent transition-colors">
+          <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span data-i18n="nav.resume">이력서</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
   <Footer />
 </Layout>
+
+<script>
+  function applyAboutLang() {
+    const lang = (localStorage.getItem("lang") as "ko" | "en") ?? "ko";
+    const container = document.querySelector<HTMLElement>("#about-paragraphs");
+    if (!container) return;
+
+    const raw = container.dataset[lang];
+    if (!raw) return;
+
+    try {
+      const paragraphs: string[] = JSON.parse(raw);
+      container.innerHTML = paragraphs
+        .map(p => `<p class="text-base leading-relaxed text-muted-foreground">${p}</p>`)
+        .join("");
+    } catch {}
+  }
+
+  applyAboutLang();
+  document.addEventListener("astro:after-swap", applyAboutLang);
+
+  // Header의 lang-toggle-btn 클릭을 감지해서 About 문단도 갱신
+  document.addEventListener("click", e => {
+    if ((e.target as HTMLElement)?.closest("#lang-toggle-btn")) {
+      setTimeout(applyAboutLang, 50);
+    }
+  });
+</script>
