@@ -17,8 +17,6 @@ const { site, features } = config;
 const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
 
-// Strip the base prefix so isActive comparisons work regardless of deploy subdirectory.
-// e.g. with base "/blog": "/blog/posts/slug" → "/posts/slug"
 const relativePath = stripBase(Astro.url.pathname);
 const pathWithoutTrailingSlash =
   relativePath.endsWith("/") && relativePath !== "/"
@@ -78,6 +76,7 @@ const isActive = (path: string) => {
           <a
             href={getRelativeLocaleUrl(locale, "posts")}
             class:list={{ "active-nav": isActive("/posts") }}
+            data-i18n="nav.posts"
           >
             {t.nav.posts}
           </a>
@@ -86,6 +85,7 @@ const isActive = (path: string) => {
           <a
             href={getRelativeLocaleUrl(locale, "tags")}
             class:list={{ "active-nav": isActive("/tags") }}
+            data-i18n="nav.tags"
           >
             {t.nav.tags}
           </a>
@@ -94,6 +94,7 @@ const isActive = (path: string) => {
           <a
             href={getRelativeLocaleUrl(locale, "projects")}
             class:list={{ "active-nav": isActive("/projects") }}
+            data-i18n="nav.projects"
           >
             {t.nav.projects}
           </a>
@@ -102,8 +103,18 @@ const isActive = (path: string) => {
           <a
             href={getRelativeLocaleUrl(locale, "about")}
             class:list={{ "active-nav": isActive("/about") }}
+            data-i18n="nav.about"
           >
             {t.nav.about}
+          </a>
+        </li>
+        <li class="col-span-2">
+          <a
+            href="/resume"
+            class:list={{ "active-nav": isActive("/resume") }}
+            data-i18n="nav.resume"
+          >
+            이력서
           </a>
         </li>
         {
@@ -151,16 +162,16 @@ const isActive = (path: string) => {
             </li>
           )
         }
+        <!-- 클라이언트 사이드 KO/EN 토글 버튼 -->
         <li class="col-span-1 flex items-center justify-center">
-          <a
-            id="lang-btn"
-            href={locale === "ko" ? `/en${currentPath === "/" ? "" : currentPath}` : currentPath || "/"}
-            class="focus-outline hover:text-accent relative flex size-8 items-center justify-center font-mono text-xs font-semibold"
+          <button
+            id="lang-toggle-btn"
+            class="focus-outline hover:text-accent relative flex size-8 items-center justify-center font-mono text-xs font-semibold transition-colors"
             title="Switch language"
             aria-label="Switch language"
           >
-            {locale === "ko" ? "EN" : "KO"}
-          </a>
+            <span id="lang-label">EN</span>
+          </button>
         </li>
         {
           features.lightAndDarkMode && (
@@ -184,6 +195,7 @@ const isActive = (path: string) => {
 </header>
 
 <script>
+  // ── 네비게이션 토글 ────────────────────────────────────────────────────────
   function toggleNav() {
     const menuBtn = document.querySelector<HTMLButtonElement>("#menu-btn");
     const menuItems = document.querySelector("#menu-items");
@@ -197,10 +209,8 @@ const isActive = (path: string) => {
 
     menuBtn.addEventListener("click", () => {
       const openMenu = menuBtn.getAttribute("aria-expanded") === "true";
-
       menuBtn.setAttribute("aria-expanded", openMenu ? "false" : "true");
       menuBtn.setAttribute("aria-label", openMenu ? openLabel : closeLabel);
-
       menuItems.classList.toggle("hidden");
       menuItems.classList.toggle("grid");
       menuIcon.classList.toggle("hidden");
@@ -208,7 +218,53 @@ const isActive = (path: string) => {
     });
   }
 
-  toggleNav();
+  // ── KO/EN 클라이언트 토글 ─────────────────────────────────────────────────
+  const KO: Record<string, string> = {
+    "nav.posts": "포스트",
+    "nav.tags": "태그",
+    "nav.projects": "프로젝트",
+    "nav.about": "소개",
+    "nav.resume": "이력서",
+  };
 
-  document.addEventListener("astro:after-swap", toggleNav);
+  const EN: Record<string, string> = {
+    "nav.posts": "Posts",
+    "nav.tags": "Tags",
+    "nav.projects": "Projects",
+    "nav.about": "About",
+    "nav.resume": "Resume",
+  };
+
+  function applyLang(lang: "ko" | "en") {
+    const map = lang === "en" ? EN : KO;
+    document.querySelectorAll<HTMLElement>("[data-i18n]").forEach(el => {
+      const key = el.dataset.i18n!;
+      if (map[key]) el.textContent = map[key];
+    });
+    const label = document.querySelector("#lang-label");
+    if (label) label.textContent = lang === "ko" ? "EN" : "KO";
+  }
+
+  function initLang() {
+    const stored = (localStorage.getItem("lang") as "ko" | "en") ?? "ko";
+    applyLang(stored);
+
+    const btn = document.querySelector<HTMLButtonElement>("#lang-toggle-btn");
+    if (!btn) return;
+
+    btn.addEventListener("click", () => {
+      const current = (localStorage.getItem("lang") as "ko" | "en") ?? "ko";
+      const next: "ko" | "en" = current === "ko" ? "en" : "ko";
+      localStorage.setItem("lang", next);
+      applyLang(next);
+    });
+  }
+
+  toggleNav();
+  initLang();
+
+  document.addEventListener("astro:after-swap", () => {
+    toggleNav();
+    initLang();
+  });
 </script>

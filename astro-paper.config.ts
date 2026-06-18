@@ -8,7 +8,7 @@ export default defineAstroPaperConfig({
     author: "leebeanbin",
     profile: "https://github.com/leebeanbin",
     ogImage: "default-og.jpg",
-    lang: "ko",    // default locale; English available at /en/
+    lang: "en",
     timezone: "Asia/Seoul",
     dir: "ltr",
   },

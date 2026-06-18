@@ -1,0 +1,223 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+import { resume } from "@/data/resume";
+
+const { name, title, summary, contact, experience, education, skills, projects, certifications, awards } = resume;
+---
+
+<Layout
+  title={`${name.ko} (${name.en}) | ${config.site.title}`}
+  description={`${name.en} — ${title.en}`}
+>
+  <Header />
+
+  <main id="main-content" class="app-layout py-10 sm:py-16">
+
+    <!-- ── 헤더 프로필 ──────────────────────────────────────────────────── -->
+    <section class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between border-b border-border pb-8">
+      <div>
+        <div class="flex flex-wrap items-baseline gap-3 mb-1">
+          <h1 class="text-3xl font-bold sm:text-4xl">{name.ko}</h1>
+          <span class="text-xl font-light text-muted-foreground sm:text-2xl">{name.en}</span>
+        </div>
+        <p class="text-accent font-medium text-lg mb-3">{title.ko} · {title.en}</p>
+        <p class="text-muted-foreground max-w-2xl leading-relaxed whitespace-pre-line">{summary}</p>
+      </div>
+
+      <!-- 연락처 -->
+      <div class="flex flex-col gap-2 text-sm shrink-0 mt-2 sm:mt-0 sm:items-end">
+        <a href={`mailto:${contact.email}`}
+           class="hover:text-accent flex items-center gap-1.5 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          {contact.email}
+        </a>
+        <a href={contact.github} target="_blank" rel="noopener"
+           class="hover:text-accent flex items-center gap-1.5 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          {contact.github.replace("https://", "")}
+        </a>
+        {contact.linkedin && (
+          <a href={contact.linkedin} target="_blank" rel="noopener"
+             class="hover:text-accent flex items-center gap-1.5 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            LinkedIn
+          </a>
+        )}
+      </div>
+    </section>
+
+    <!-- ── 경력 ─────────────────────────────────────────────────────────── -->
+    {experience.length > 0 && (
+      <section class="mb-10">
+        <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">경력 · Experience</h2>
+        <div class="space-y-8">
+          {experience.map(exp => (
+            <div class="relative pl-5 border-l-2 border-border hover:border-accent transition-colors">
+              <div class="flex flex-wrap items-baseline justify-between gap-2 mb-1">
+                <div>
+                  <span class="font-semibold text-lg">{exp.company}</span>
+                  <span class="text-muted-foreground mx-2">·</span>
+                  <span class="text-accent font-medium">{exp.role}</span>
+                </div>
+                <span class="text-sm text-muted-foreground font-mono shrink-0">{exp.period}</span>
+              </div>
+              {exp.description && (
+                <p class="text-sm text-muted-foreground mb-2">{exp.description}</p>
+              )}
+              <ul class="space-y-1 mb-3">
+                {exp.bullets.map(b => (
+                  <li class="text-sm flex gap-2">
+                    <span class="text-accent mt-1 shrink-0">▸</span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+              <div class="flex flex-wrap gap-1">
+                {exp.tags.map(tag => (
+                  <span class="bg-accent/10 text-accent rounded px-2 py-0.5 font-mono text-xs">{tag}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ── 기술 스택 ─────────────────────────────────────────────────────── -->
+    <section class="mb-10">
+      <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">기술 스택 · Skills</h2>
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {skills.map(group => (
+          <div class="border border-border rounded-lg p-4">
+            <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{group.category}</p>
+            <div class="flex flex-wrap gap-1.5">
+              {group.items.map(item => (
+                <span class="bg-muted text-foreground rounded px-2 py-0.5 text-sm font-mono">{item}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ── 학력 ─────────────────────────────────────────────────────────── -->
+    {education.length > 0 && (
+      <section class="mb-10">
+        <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">학력 · Education</h2>
+        <div class="space-y-4">
+          {education.map(edu => (
+            <div class="flex flex-wrap items-baseline justify-between gap-2 pl-5 border-l-2 border-border">
+              <div>
+                <span class="font-semibold">{edu.school}</span>
+                <span class="text-muted-foreground mx-2">·</span>
+                <span>{edu.major}</span>
+                <span class="text-muted-foreground mx-2">·</span>
+                <span class="text-sm">{edu.degree}</span>
+                {edu.note && <span class="ml-2 text-xs text-accent">{edu.note}</span>}
+              </div>
+              <span class="text-sm text-muted-foreground font-mono shrink-0">{edu.period}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ── 프로젝트 ───────────────────────────────────────────────────────── -->
+    {projects.length > 0 && (
+      <section class="mb-10">
+        <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">프로젝트 · Projects</h2>
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map(p => (
+            <a href={p.url} target="_blank" rel="noopener"
+               class="border border-border hover:border-accent rounded-lg p-4 flex flex-col gap-2 group transition-colors">
+              <span class="font-mono font-semibold group-hover:text-accent transition-colors">{p.name}</span>
+              <span class="text-sm text-muted-foreground flex-1">{p.summary}</span>
+              <div class="flex flex-wrap gap-1">
+                {p.tags.map(tag => (
+                  <span class="bg-accent/10 text-accent rounded px-1.5 py-0.5 font-mono text-xs">{tag}</span>
+                ))}
+              </div>
+            </a>
+          ))}
+        </div>
+        <p class="mt-3 text-sm text-muted-foreground">
+          전체 프로젝트 →
+          <a href="/projects" class="text-accent hover:underline ml-1">Projects 페이지</a>
+        </p>
+      </section>
+    )}
+
+    <!-- ── 자격증 / 수상 ──────────────────────────────────────────────────── -->
+    {(certifications.length > 0 || awards.length > 0) && (
+      <section class="mb-10">
+        {certifications.length > 0 && (
+          <div class="mb-6">
+            <h2 class="mb-4 text-lg font-semibold uppercase tracking-widest text-accent">자격증 · Certifications</h2>
+            <ul class="space-y-2">
+              {certifications.map((c: any) => (
+                <li class="flex flex-wrap items-baseline justify-between gap-2">
+                  <div>
+                    <span class="font-medium">{c.name}</span>
+                    <span class="text-muted-foreground text-sm ml-2">{c.issuer}</span>
+                  </div>
+                  <span class="text-sm text-muted-foreground font-mono">{c.date}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {awards.length > 0 && (
+          <div>
+            <h2 class="mb-4 text-lg font-semibold uppercase tracking-widest text-accent">수상 · Awards</h2>
+            <ul class="space-y-2">
+              {awards.map((a: any) => (
+                <li class="flex flex-wrap items-baseline justify-between gap-2">
+                  <div>
+                    <span class="font-medium">{a.name}</span>
+                    <span class="text-muted-foreground text-sm ml-2">{a.issuer}</span>
+                    {a.description && <span class="text-sm ml-2">{a.description}</span>}
+                  </div>
+                  <span class="text-sm text-muted-foreground font-mono">{a.date}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
+    )}
+
+    <!-- 인쇄 버튼 -->
+    <div class="mt-12 border-t border-border pt-6 flex justify-end">
+      <button
+        onclick="window.print()"
+        class="border border-border hover:border-accent hover:text-accent text-sm px-4 py-2 rounded transition-colors flex items-center gap-2"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+        </svg>
+        인쇄 / PDF 저장
+      </button>
+    </div>
+
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  @media print {
+    header, footer, button { display: none !important; }
+    main { padding: 0 !important; }
+    a { color: inherit !important; text-decoration: none !important; }
+    .border-l-2 { border-left-color: #ccc !important; }
+  }
+</style>
