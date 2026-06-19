@@ -31,42 +31,46 @@ const { hero } = siteContent;
   <main id="main-content" data-layout="index" data-home-path={homePath} class="app-layout">
 
     <!-- ══ INTRO ════════════════════════════════════════════════════════════ -->
-    <!-- 짧은 소개만 — 상세 프로필은 /about -->
-    <section class="border-b border-border py-10 sm:py-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
-      <div>
-        <h1 class="text-2xl sm:text-3xl font-bold mb-2">
-          <span class="lang-ko">{hero.name}</span>
-          <span class="lang-en">{hero.nameEn}</span>
-          <span class="text-muted-foreground font-light text-lg sm:text-xl ml-2">
-            <span class="lang-ko">의 기술 블로그</span>
-            <span class="lang-en">'s dev log</span>
-          </span>
-        </h1>
-        <p class="text-sm text-muted-foreground max-w-lg">
-          <span class="lang-ko">{hero.bio}</span>
-          <span class="lang-en">{hero.bioEn}</span>
-        </p>
-      </div>
+    <section class="border-b border-border py-14 sm:py-20">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8">
+        <div>
+          <p class="text-xs font-mono text-muted-foreground tracking-widest uppercase mb-4">
+            AI / Backend Engineer
+          </p>
+          <h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-4 leading-tight">
+            <span class="lang-ko">{hero.name}</span>
+            <span class="lang-en">{hero.nameEn}</span>
+            <span class="block text-2xl sm:text-3xl font-semibold text-muted-foreground mt-1">
+              <span class="lang-ko">의 기술 블로그</span>
+              <span class="lang-en">'s dev log</span>
+            </span>
+          </h1>
+          <p class="text-base text-muted-foreground max-w-xl leading-relaxed">
+            <span class="lang-ko">{hero.bio}</span>
+            <span class="lang-en">{hero.bioEn}</span>
+          </p>
+        </div>
 
-      <div class="flex items-center gap-3 shrink-0">
-        <a href="/about"
-           class="border border-border rounded-lg px-3 py-1.5 text-xs font-medium hover:border-accent hover:text-accent transition-colors">
-          <span class="lang-ko">소개</span><span class="lang-en">About</span>
-        </a>
-        <a href="/projects"
-           class="border border-border rounded-lg px-3 py-1.5 text-xs font-medium hover:border-accent hover:text-accent transition-colors">
-          <span class="lang-ko">프로젝트</span><span class="lang-en">Projects</span>
-        </a>
-        <a target="_blank" href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}rss.xml`} aria-label="RSS">
-          <IconRss width={16} height={16} class="stroke-muted-foreground hover:stroke-accent transition-colors" />
-        </a>
+        <div class="flex flex-col gap-2 shrink-0">
+          <a href="/about"
+             class="inline-flex items-center justify-center gap-2 border border-border rounded-lg px-4 py-2 text-sm font-medium hover:border-accent hover:text-accent transition-all hover:-translate-y-0.5">
+            <span class="lang-ko">소개 보기</span><span class="lang-en">About me</span>
+            <span class="text-muted-foreground">→</span>
+          </a>
+          <a href="/projects"
+             class="inline-flex items-center justify-center gap-2 bg-accent text-white rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90 transition-all hover:-translate-y-0.5">
+            <span class="lang-ko">프로젝트</span><span class="lang-en">Projects</span>
+            <span>↗</span>
+          </a>
+        </div>
       </div>
     </section>
 
     <!-- ══ FEATURED POSTS ════════════════════════════════════════════════════ -->
     {featuredPosts.length > 0 && (
       <section class="border-b border-border py-10">
-        <h2 class="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-5">
+        <h2 class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6">
+          <span class="inline-block size-1.5 rounded-full bg-accent"></span>
           <span class="lang-ko">추천 포스트</span>
           <span class="lang-en">Featured</span>
         </h2>
@@ -78,8 +82,9 @@ const { hero } = siteContent;
 
     <!-- ══ RECENT POSTS ══════════════════════════════════════════════════════ -->
     <section class="py-10">
-      <div class="flex items-center justify-between mb-5">
-        <h2 class="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          <span class="inline-block size-1.5 rounded-full bg-muted-foreground"></span>
           <span class="lang-ko">최근 포스트</span>
           <span class="lang-en">Recent Posts</span>
         </h2>

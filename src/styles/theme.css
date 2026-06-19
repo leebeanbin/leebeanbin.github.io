@@ -7,28 +7,31 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --font-app: var(--font-google-sans-code);
+
+  /* Inter for UI, Noto Sans KR for Korean — monospace only for code */
+  --font-app: "Inter", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-google-sans-code), ui-monospace, "Cascadia Code", monospace;
 }
 
 /* Light theme */
 :root,
 [data-theme="light"] {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --accent: #0284c7;
+  --background: #ffffff;
+  --foreground: #09090b;
+  --accent: #2563eb;
   --accent-foreground: #ffffff;
-  --muted: #e2e8f0;
-  --muted-foreground: #64748b;
-  --border: #cbd5e1;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --border: #e4e4e7;
 }
 
-/* Dark theme — GitHub dark style */
+/* Dark theme */
 [data-theme="dark"] {
-  --background: #0d1117;
-  --foreground: #e6edf3;
-  --accent: #58a6ff;
-  --accent-foreground: #0d1117;
-  --muted: #161b22;
-  --muted-foreground: #8b949e;
-  --border: #30363d;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --accent: #60a5fa;
+  --accent-foreground: #09090b;
+  --muted: #18181b;
+  --muted-foreground: #a1a1aa;
+  --border: #27272a;
 }

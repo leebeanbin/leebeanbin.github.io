@@ -11,6 +11,19 @@
     scrollbar-width: auto;
     scrollbar-color: var(--color-muted) transparent;
   }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    word-break: keep-all;           /* 한국어 단어 중간 줄바꿈 방지 */
+    overflow-wrap: break-word;
+    letter-spacing: -0.011em;
+  }
+  h1, h2, h3 {
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
   a,
   button {
     @apply outline-accent outline-offset-1 focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed;
