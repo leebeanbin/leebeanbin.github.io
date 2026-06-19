@@ -16,14 +16,32 @@ const { name, title, summary, contact, experience, education, skills, projects, 
 
   <main id="main-content" class="app-layout py-10 sm:py-16">
 
+    <!-- 브레드크럼 -->
+    <p class="text-xs text-muted-foreground mb-8">
+      <a href="/about" class="hover:text-accent transition-colors">
+        <span class="lang-ko">소개</span><span class="lang-en">About</span>
+      </a>
+      <span class="mx-2 opacity-50">›</span>
+      <span class="lang-ko">이력서</span><span class="lang-en">Resume</span>
+    </p>
+
     <!-- ── 헤더 프로필 ──────────────────────────────────────────────────── -->
     <section class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between border-b border-border pb-8">
       <div>
         <div class="flex flex-wrap items-baseline gap-3 mb-1">
-          <h1 class="text-3xl font-bold sm:text-4xl">{name.ko}</h1>
-          <span class="text-xl font-light text-muted-foreground sm:text-2xl">{name.en}</span>
+          <h1 class="text-3xl font-bold sm:text-4xl">
+            <span class="lang-ko">{name.ko}</span>
+            <span class="lang-en">{name.en}</span>
+          </h1>
+          <span class="text-xl font-light text-muted-foreground sm:text-2xl">
+            <span class="lang-ko">{name.en}</span>
+            <span class="lang-en">{name.ko}</span>
+          </span>
         </div>
-        <p class="text-accent font-medium text-lg mb-3">{title.ko} · {title.en}</p>
+        <p class="text-accent font-medium text-lg mb-3">
+          <span class="lang-ko">{title.ko}</span>
+          <span class="lang-en">{title.en}</span>
+        </p>
         <p class="text-muted-foreground max-w-2xl leading-relaxed whitespace-pre-line">{summary}</p>
       </div>
 
