@@ -78,4 +78,16 @@ export const TECH_COLORS: Record<string, string> = {
   Git:      "#F05032",
   GitHub:   "#6E40C9",
   gRPC:     "#244C5A",
+  Jupyter:  "#F37626",
+
+  // ── Services / Platforms ──────────────────────────────────────────────────
+  "Kakao Maps": "#FEE500",
+  Discord:      "#5865F2",
+  Notion:       "#000000",
+
+  // ── Concepts / Patterns ───────────────────────────────────────────────────
+  DDD:    "#8B5CF6",
+  TUI:    "#14B8A6",
+  PWA:    "#5A0FC8",
+  OpenAI: "#10A37F",
 };

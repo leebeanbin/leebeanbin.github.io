@@ -51,24 +51,18 @@ const { name, contact } = resume;
         <span class="lang-ko">GitHub 기여</span>
         <span class="lang-en">GitHub Contributions</span>
       </h2>
-      <div class="relative overflow-x-auto rounded-xl border border-border p-4">
-        <!-- 스켈레톤 (이미지 로딩 전 표시) -->
-        <div id="gh-skeleton" class="h-32 w-full rounded-lg bg-muted animate-pulse"></div>
-        <!-- Light mode -->
+      <div class="overflow-x-auto rounded-xl border border-border p-4 bg-muted/30 min-h-28">
         <img
           src="https://ghchart.rshah.org/0284c7/leebeanbin"
           alt="GitHub contribution graph"
-          class="w-full dark:hidden hidden"
-          loading="lazy"
-          onload="this.classList.remove('hidden'); document.getElementById('gh-skeleton')?.remove();"
+          class="w-full block dark:hidden"
+          loading="eager"
         />
-        <!-- Dark mode -->
         <img
           src="https://ghchart.rshah.org/58a6ff/leebeanbin"
           alt="GitHub contribution graph"
           class="w-full hidden dark:block"
-          loading="lazy"
-          onload="document.getElementById('gh-skeleton')?.remove();"
+          loading="eager"
         />
       </div>
       <a href={contact.github} target="_blank" rel="noopener"
