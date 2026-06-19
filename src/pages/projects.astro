@@ -8,6 +8,7 @@ import Footer from "@/components/Footer.astro";
 import config from "@/config";
 import { projects as staticProjects } from "@/data/projects";
 import { getGithubPinnedRepos, type GithubRepo } from "@/utils/getGithubPins";
+import { TECH_COLORS } from "@/data/techColors";
 
 // 빌드 시 GitHub 핀 레포 가져오기 (실패 시 null)
 const pinned = await getGithubPinnedRepos();
@@ -92,9 +93,17 @@ const others = staticProjects.filter(p =>
               {p.longDesc && <p class="text-xs text-muted-foreground leading-relaxed">{p.longDesc}</p>}
             </div>
             <div class="flex flex-wrap gap-1.5">
-              {p.tags.map(tag => (
-                <span class="border border-border rounded-full px-2.5 py-0.5 font-mono text-xs group-hover:border-accent/50 transition-colors">{tag}</span>
-              ))}
+              {p.tags.map(tag => {
+                const color = TECH_COLORS[tag];
+                return (
+                  <span
+                    class="tech-chip border rounded-full px-2.5 py-0.5 font-mono text-xs transition-all cursor-default"
+                    style={color ? `--chip-color:${color}` : ""}
+                  >
+                    {tag}
+                  </span>
+                );
+              })}
             </div>
           </a>
         ))}
@@ -115,9 +124,17 @@ const others = staticProjects.filter(p =>
               </div>
               <div class="flex items-center gap-2 shrink-0">
                 <div class="hidden sm:flex gap-1">
-                  {p.tags.slice(0, 2).map(tag => (
-                    <span class="border border-border rounded px-2 py-0.5 font-mono text-xs">{tag}</span>
-                  ))}
+                  {p.tags.slice(0, 2).map(tag => {
+                    const color = TECH_COLORS[tag];
+                    return (
+                      <span
+                        class="tech-chip border rounded px-2 py-0.5 font-mono text-xs transition-all"
+                        style={color ? `--chip-color:${color}` : ""}
+                      >
+                        {tag}
+                      </span>
+                    );
+                  })}
                 </div>
                 <svg class="size-4 text-muted-foreground group-hover:text-accent transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
@@ -132,3 +149,15 @@ const others = staticProjects.filter(p =>
   </main>
   <Footer />
 </Layout>
+
+<style>
+  .tech-chip {
+    background: color-mix(in srgb, var(--chip-color, #6366F1) 10%, transparent);
+    color: var(--chip-color, #6366F1);
+    border-color: color-mix(in srgb, var(--chip-color, #6366F1) 30%, transparent);
+  }
+  .tech-chip:hover {
+    background: color-mix(in srgb, var(--chip-color, #6366F1) 20%, transparent);
+    border-color: var(--chip-color, #6366F1);
+  }
+</style>

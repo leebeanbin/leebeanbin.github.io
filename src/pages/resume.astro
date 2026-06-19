@@ -4,8 +4,24 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import config from "@/config";
 import { resume } from "@/data/resume";
+import { TECH_COLORS } from "@/data/techColors";
 
 const { name, title, summary, summaryEn, contact, experience, education, skills, projects, certifications, awards } = resume;
+
+// 카테고리별 왼쪽 accent 색상
+const CATEGORY_COLORS: Record<string, string> = {
+  "Languages":        "#3178C6",
+  "Backend":          "#6DB33F",
+  "AI / ML":          "#7C3AED",
+  "Database & Infra": "#F59E0B",
+  "Frontend":         "#06B6D4",
+};
+
+function chipStyle(tech: string): string {
+  const color = TECH_COLORS[tech];
+  if (!color) return "";
+  return `--chip-color:${color}`;
+}
 ---
 
 <Layout
@@ -137,7 +153,12 @@ const { name, title, summary, summaryEn, contact, experience, education, skills,
               </ul>
               <div class="flex flex-wrap gap-1">
                 {exp.tags.map(tag => (
-                  <span class="bg-accent/10 text-accent rounded px-2 py-0.5 font-mono text-xs">{tag}</span>
+                  <span
+                    class="tech-chip border rounded-full px-2 py-0.5 font-mono text-xs cursor-default transition-all"
+                    style={chipStyle(tag)}
+                  >
+                    {tag}
+                  </span>
                 ))}
               </div>
             </div>
@@ -152,17 +173,33 @@ const { name, title, summary, summaryEn, contact, experience, education, skills,
         <span class="lang-ko">기술 스택</span>
         <span class="lang-en">Skills</span>
       </h2>
-      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {skills.map(group => (
-          <div class="border border-border rounded-lg p-4">
-            <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{group.category}</p>
-            <div class="flex flex-wrap gap-1.5">
-              {group.items.map(item => (
-                <span class="bg-muted text-foreground rounded px-2 py-0.5 text-sm font-mono">{item}</span>
-              ))}
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {skills.map(group => {
+          const catColor = CATEGORY_COLORS[group.category] ?? "#6366F1";
+          return (
+            <div
+              class="rounded-xl border border-border p-5 transition-shadow hover:shadow-sm"
+              style={`border-left: 3px solid ${catColor}`}
+            >
+              <p
+                class="text-xs font-bold uppercase tracking-widest mb-3"
+                style={`color: ${catColor}`}
+              >
+                {group.category}
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                {group.items.map(item => (
+                  <span
+                    class="tech-chip border rounded-full px-2.5 py-0.5 text-xs font-mono cursor-default transition-all"
+                    style={chipStyle(item)}
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
 
@@ -236,7 +273,12 @@ const { name, title, summary, summaryEn, contact, experience, education, skills,
               </span>
               <div class="flex flex-wrap gap-1">
                 {p.tags.map(tag => (
-                  <span class="bg-accent/10 text-accent rounded px-1.5 py-0.5 font-mono text-xs">{tag}</span>
+                  <span
+                    class="tech-chip border rounded-full px-2 py-0.5 font-mono text-xs cursor-default transition-all"
+                    style={chipStyle(tag)}
+                  >
+                    {tag}
+                  </span>
                 ))}
               </div>
             </a>
@@ -334,10 +376,27 @@ const { name, title, summary, summaryEn, contact, experience, education, skills,
 </Layout>
 
 <style>
+  /* 브랜드 컬러 칩 — CSS custom property로 hover까지 처리 */
+  .tech-chip {
+    background: color-mix(in srgb, var(--chip-color, #6366F1) 10%, transparent);
+    color: var(--chip-color, #6366F1);
+    border-color: color-mix(in srgb, var(--chip-color, #6366F1) 30%, transparent);
+  }
+  .tech-chip:hover {
+    background: color-mix(in srgb, var(--chip-color, #6366F1) 20%, transparent);
+    border-color: var(--chip-color, #6366F1);
+    transform: translateY(-1px);
+  }
+
   @media print {
     header, footer, button { display: none !important; }
     main { padding: 0 !important; }
     a { color: inherit !important; text-decoration: none !important; }
     .border-l-2 { border-left-color: #ccc !important; }
+    .tech-chip {
+      background: transparent !important;
+      border-color: currentColor !important;
+      color: inherit !important;
+    }
   }
 </style>

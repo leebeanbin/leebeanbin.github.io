@@ -5,6 +5,7 @@ import Footer from "@/components/Footer.astro";
 import config from "@/config";
 import { siteContent } from "@/data/site";
 import { resume } from "@/data/resume";
+import { TECH_COLORS } from "@/data/techColors";
 
 const { about, hero, techStack } = siteContent;
 const { name, contact } = resume;
@@ -81,11 +82,17 @@ const { name, contact } = resume;
         <span class="lang-en">Tech Stack</span>
       </h2>
       <div class="flex flex-wrap gap-2">
-        {techStack.map(tech => (
-          <span class="border border-border rounded-full px-3 py-1 text-sm font-mono hover:border-accent transition-colors cursor-default">
-            {tech}
-          </span>
-        ))}
+        {techStack.map(tech => {
+          const color = TECH_COLORS[tech];
+          return (
+            <span
+              class="tech-chip border rounded-full px-3 py-1 text-sm font-mono cursor-default transition-all"
+              style={color ? `--chip-color:${color}` : ""}
+            >
+              {tech}
+            </span>
+          );
+        })}
       </div>
       <p class="mt-3 text-xs text-muted-foreground">
         <span class="lang-ko">상세 기술 스택과 경력은</span>
@@ -131,3 +138,16 @@ const { name, contact } = resume;
   </main>
   <Footer />
 </Layout>
+
+<style>
+  .tech-chip {
+    background: color-mix(in srgb, var(--chip-color, #6366F1) 10%, transparent);
+    color: var(--chip-color, #6366F1);
+    border-color: color-mix(in srgb, var(--chip-color, #6366F1) 30%, transparent);
+  }
+  .tech-chip:hover {
+    background: color-mix(in srgb, var(--chip-color, #6366F1) 20%, transparent);
+    border-color: var(--chip-color, #6366F1);
+    transform: translateY(-1px);
+  }
+</style>
