@@ -6,6 +6,7 @@
 export type ResumeData = {
   name: { ko: string; en: string };
   title: { ko: string; en: string };
+  photo?: string;           // 증명사진 URL 또는 /uploads/photo.jpg
   summary: string;
   summaryEn?: string;
   contact: {
@@ -13,6 +14,8 @@ export type ResumeData = {
     github: string;
     linkedin?: string;
     blog?: string;
+    location?: string;      // 예: "Seoul, South Korea"
+    phone?: string;
   };
   experience: Array<{
     company: string;
@@ -79,12 +82,17 @@ Python · Java 기반 프로덕션 경험과 AI 파이프라인 구축 경험을
   summaryEn: `From LLM integrations to distributed messaging systems — I design and build intelligent backends.
 Production experience with Python & Java, and hands-on AI pipeline development.`,
 
+  // ── 증명사진 (선택) ─────────────────────────────────────────────────────
+  // photo: "/uploads/profile.jpg",  // public/uploads/ 에 사진 넣고 경로 입력
+
   // ── 연락처 ────────────────────────────────────────────────────────────────
   contact: {
     email: "wjdqlsdu388@gmail.com",
     github: "https://github.com/leebeanbin",
-    linkedin: "",
+    linkedin: "",   // "https://linkedin.com/in/..."
     blog: "https://leebeanbin.github.io",
+    location: "Seoul, South Korea",
+    phone: "",      // "+82-10-xxxx-xxxx"
   },
 
   // ── 경력 ─────────────────────────────────────────────────────────────────

@@ -1,0 +1,111 @@
+# Decap CMS 설정 — leebeanbin.log
+# ─────────────────────────────────────────────────────────────────────────────
+# 인증 방식: Netlify Identity (Git Gateway)
+# 설정 방법: SETUP.md 또는 아래 주석 참고
+#
+# [1단계] GitHub OAuth App 생성
+#   GitHub → Settings → Developer Settings → OAuth Apps → New OAuth App
+#   Homepage URL: https://leebeanbin.github.io
+#   Callback URL: https://api.netlify.com/auth/done
+#
+# [2단계] Netlify 무료 계정에서 Identity 연동
+#   netlify.com → New site → 빌드 없이 생성 → Site settings
+#   → Identity → Enable → External providers → GitHub 추가
+#     (위에서 만든 Client ID / Secret 입력)
+#   → Services → Git Gateway → Enable
+#
+# [3단계] 아래 site_url을 Netlify 사이트 URL로 변경
+# ─────────────────────────────────────────────────────────────────────────────
+
+backend:
+  name: git-gateway
+  repo: leebeanbin/leebeanbin.github.io
+  branch: main
+
+# Netlify Identity 서비스 URL (2단계에서 생성한 Netlify 사이트 주소)
+# 예: site_url: https://my-decap-proxy.netlify.app
+site_url: https://leebeanbin.github.io
+
+# 이미지 저장 위치
+media_folder: public/uploads
+public_folder: /uploads
+
+# ─── 글 컬렉션 ───────────────────────────────────────────────────────────────
+collections:
+  - name: posts
+    label: 포스트
+    label_singular: 포스트
+    folder: src/content/posts
+    create: true
+    extension: md
+    format: frontmatter
+    slug: "{{slug}}"
+    preview_path: "posts/{{slug}}"
+
+    # 폴더(카테고리)별로 글 구분하고 싶으면 아래 활성화
+    # nested:
+    #   depth: 2
+
+    fields:
+      - label: 제목
+        name: title
+        widget: string
+        hint: "포스트 제목"
+
+      - label: 설명 (미리보기)
+        name: description
+        widget: string
+        hint: "카드에 표시되는 한 줄 요약"
+
+      - label: 발행일
+        name: pubDatetime
+        widget: datetime
+        format: "YYYY-MM-DDTHH:mm:ssZ"
+        date_format: "YYYY-MM-DD"
+        time_format: "HH:mm"
+        default: ""
+
+      - label: 태그
+        name: tags
+        widget: list
+        hint: "쉼표로 구분 — 예: java, spring-boot, backend"
+
+      - label: 카테고리 폴더
+        name: category
+        widget: select
+        options:
+          - { label: "없음 (루트)", value: "" }
+          - { label: "backend", value: "backend" }
+          - { label: "frontend", value: "frontend" }
+          - { label: "ai-ml", value: "ai-ml" }
+          - { label: "devops", value: "devops" }
+          - { label: "cs", value: "cs" }
+          - { label: "project", value: "project" }
+        default: ""
+        required: false
+        hint: "포스트 폴더명 → 카드 카테고리 배지에 표시됩니다"
+
+      - label: 추천 포스트
+        name: featured
+        widget: boolean
+        default: false
+        required: false
+
+      - label: 초안
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+
+      - label: 썸네일 이미지
+        name: ogImage
+        widget: image
+        required: false
+        hint: "포스트 카드 썸네일 및 OG 이미지"
+
+      - label: 본문
+        name: body
+        widget: markdown
+        hint: "마크다운으로 작성합니다. 이미지는 드래그앤드롭으로 삽입 가능."
+        modes: [raw, rich_text]
+        default_mode: rich_text
