@@ -5,7 +5,7 @@ import Footer from "@/components/Footer.astro";
 import config from "@/config";
 import { resume } from "@/data/resume";
 
-const { name, title, summary, contact, experience, education, skills, projects, certifications, awards } = resume;
+const { name, title, summary, summaryEn, contact, experience, education, skills, projects, certifications, awards } = resume;
 ---
 
 <Layout
@@ -42,7 +42,14 @@ const { name, title, summary, contact, experience, education, skills, projects, 
           <span class="lang-ko">{title.ko}</span>
           <span class="lang-en">{title.en}</span>
         </p>
-        <p class="text-muted-foreground max-w-2xl leading-relaxed whitespace-pre-line">{summary}</p>
+        <p class="text-muted-foreground max-w-2xl leading-relaxed whitespace-pre-line">
+          {summaryEn ? (
+            <>
+              <span class="lang-ko">{summary}</span>
+              <span class="lang-en">{summaryEn}</span>
+            </>
+          ) : summary}
+        </p>
       </div>
 
       <!-- 연락처 -->
@@ -76,7 +83,10 @@ const { name, title, summary, contact, experience, education, skills, projects, 
     <!-- ── 경력 ─────────────────────────────────────────────────────────── -->
     {experience.length > 0 && (
       <section class="mb-10">
-        <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">경력 · Experience</h2>
+        <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">
+          <span class="lang-ko">경력</span>
+          <span class="lang-en">Experience</span>
+        </h2>
         <div class="space-y-8">
           {experience.map(exp => (
             <div class="relative pl-5 border-l-2 border-border hover:border-accent transition-colors">
@@ -84,20 +94,46 @@ const { name, title, summary, contact, experience, education, skills, projects, 
                 <div>
                   <span class="font-semibold text-lg">{exp.company}</span>
                   <span class="text-muted-foreground mx-2">·</span>
-                  <span class="text-accent font-medium">{exp.role}</span>
+                  <span class="text-accent font-medium">
+                    {exp.roleEn ? (
+                      <>
+                        <span class="lang-ko">{exp.role}</span>
+                        <span class="lang-en">{exp.roleEn}</span>
+                      </>
+                    ) : exp.role}
+                  </span>
                 </div>
                 <span class="text-sm text-muted-foreground font-mono shrink-0">{exp.period}</span>
               </div>
-              {exp.description && (
-                <p class="text-sm text-muted-foreground mb-2">{exp.description}</p>
+              {(exp.description || exp.descriptionEn) && (
+                <p class="text-sm text-muted-foreground mb-2">
+                  {exp.descriptionEn ? (
+                    <>
+                      <span class="lang-ko">{exp.description}</span>
+                      <span class="lang-en">{exp.descriptionEn}</span>
+                    </>
+                  ) : exp.description}
+                </p>
               )}
               <ul class="space-y-1 mb-3">
-                {exp.bullets.map(b => (
-                  <li class="text-sm flex gap-2">
-                    <span class="text-accent mt-1 shrink-0">▸</span>
-                    <span>{b}</span>
-                  </li>
-                ))}
+                {exp.bulletsEn ? (
+                  exp.bullets.map((b, i) => (
+                    <li class="text-sm flex gap-2">
+                      <span class="text-accent mt-1 shrink-0">▸</span>
+                      <span>
+                        <span class="lang-ko">{b}</span>
+                        <span class="lang-en">{exp.bulletsEn![i] ?? b}</span>
+                      </span>
+                    </li>
+                  ))
+                ) : (
+                  exp.bullets.map(b => (
+                    <li class="text-sm flex gap-2">
+                      <span class="text-accent mt-1 shrink-0">▸</span>
+                      <span>{b}</span>
+                    </li>
+                  ))
+                )}
               </ul>
               <div class="flex flex-wrap gap-1">
                 {exp.tags.map(tag => (
@@ -112,7 +148,10 @@ const { name, title, summary, contact, experience, education, skills, projects, 
 
     <!-- ── 기술 스택 ─────────────────────────────────────────────────────── -->
     <section class="mb-10">
-      <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">기술 스택 · Skills</h2>
+      <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">
+        <span class="lang-ko">기술 스택</span>
+        <span class="lang-en">Skills</span>
+      </h2>
       <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {skills.map(group => (
           <div class="border border-border rounded-lg p-4">
@@ -130,17 +169,43 @@ const { name, title, summary, contact, experience, education, skills, projects, 
     <!-- ── 학력 ─────────────────────────────────────────────────────────── -->
     {education.length > 0 && (
       <section class="mb-10">
-        <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">학력 · Education</h2>
+        <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">
+          <span class="lang-ko">학력</span>
+          <span class="lang-en">Education</span>
+        </h2>
         <div class="space-y-4">
           {education.map(edu => (
             <div class="flex flex-wrap items-baseline justify-between gap-2 pl-5 border-l-2 border-border">
               <div>
                 <span class="font-semibold">{edu.school}</span>
                 <span class="text-muted-foreground mx-2">·</span>
-                <span>{edu.major}</span>
+                <span>
+                  {edu.majorEn ? (
+                    <>
+                      <span class="lang-ko">{edu.major}</span>
+                      <span class="lang-en">{edu.majorEn}</span>
+                    </>
+                  ) : edu.major}
+                </span>
                 <span class="text-muted-foreground mx-2">·</span>
-                <span class="text-sm">{edu.degree}</span>
-                {edu.note && <span class="ml-2 text-xs text-accent">{edu.note}</span>}
+                <span class="text-sm">
+                  {edu.degreeEn ? (
+                    <>
+                      <span class="lang-ko">{edu.degree}</span>
+                      <span class="lang-en">{edu.degreeEn}</span>
+                    </>
+                  ) : edu.degree}
+                </span>
+                {(edu.note || edu.noteEn) && (
+                  <span class="ml-2 text-xs text-accent">
+                    {edu.noteEn ? (
+                      <>
+                        <span class="lang-ko">{edu.note}</span>
+                        <span class="lang-en">{edu.noteEn}</span>
+                      </>
+                    ) : edu.note}
+                  </span>
+                )}
               </div>
               <span class="text-sm text-muted-foreground font-mono shrink-0">{edu.period}</span>
             </div>
@@ -152,13 +217,23 @@ const { name, title, summary, contact, experience, education, skills, projects, 
     <!-- ── 프로젝트 ───────────────────────────────────────────────────────── -->
     {projects.length > 0 && (
       <section class="mb-10">
-        <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">프로젝트 · Projects</h2>
+        <h2 class="mb-5 text-lg font-semibold uppercase tracking-widest text-accent">
+          <span class="lang-ko">프로젝트</span>
+          <span class="lang-en">Projects</span>
+        </h2>
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map(p => (
             <a href={p.url} target="_blank" rel="noopener"
                class="border border-border hover:border-accent rounded-lg p-4 flex flex-col gap-2 group transition-colors">
               <span class="font-mono font-semibold group-hover:text-accent transition-colors">{p.name}</span>
-              <span class="text-sm text-muted-foreground flex-1">{p.summary}</span>
+              <span class="text-sm text-muted-foreground flex-1">
+                {p.summaryEn ? (
+                  <>
+                    <span class="lang-ko">{p.summary}</span>
+                    <span class="lang-en">{p.summaryEn}</span>
+                  </>
+                ) : p.summary}
+              </span>
               <div class="flex flex-wrap gap-1">
                 {p.tags.map(tag => (
                   <span class="bg-accent/10 text-accent rounded px-1.5 py-0.5 font-mono text-xs">{tag}</span>
@@ -168,8 +243,12 @@ const { name, title, summary, contact, experience, education, skills, projects, 
           ))}
         </div>
         <p class="mt-3 text-sm text-muted-foreground">
-          전체 프로젝트 →
-          <a href="/projects" class="text-accent hover:underline ml-1">Projects 페이지</a>
+          <span class="lang-ko">전체 프로젝트 →</span>
+          <span class="lang-en">All projects →</span>
+          <a href="/projects" class="text-accent hover:underline ml-1">
+            <span class="lang-ko">Projects 페이지</span>
+            <span class="lang-en">Projects page</span>
+          </a>
         </p>
       </section>
     )}
@@ -179,9 +258,12 @@ const { name, title, summary, contact, experience, education, skills, projects, 
       <section class="mb-10">
         {certifications.length > 0 && (
           <div class="mb-6">
-            <h2 class="mb-4 text-lg font-semibold uppercase tracking-widest text-accent">자격증 · Certifications</h2>
+            <h2 class="mb-4 text-lg font-semibold uppercase tracking-widest text-accent">
+              <span class="lang-ko">자격증</span>
+              <span class="lang-en">Certifications</span>
+            </h2>
             <ul class="space-y-2">
-              {certifications.map((c: any) => (
+              {certifications.map(c => (
                 <li class="flex flex-wrap items-baseline justify-between gap-2">
                   <div>
                     <span class="font-medium">{c.name}</span>
@@ -195,14 +277,33 @@ const { name, title, summary, contact, experience, education, skills, projects, 
         )}
         {awards.length > 0 && (
           <div>
-            <h2 class="mb-4 text-lg font-semibold uppercase tracking-widest text-accent">수상 · Awards</h2>
+            <h2 class="mb-4 text-lg font-semibold uppercase tracking-widest text-accent">
+              <span class="lang-ko">수상</span>
+              <span class="lang-en">Awards</span>
+            </h2>
             <ul class="space-y-2">
-              {awards.map((a: any) => (
+              {awards.map(a => (
                 <li class="flex flex-wrap items-baseline justify-between gap-2">
                   <div>
-                    <span class="font-medium">{a.name}</span>
+                    <span class="font-medium">
+                      {a.nameEn ? (
+                        <>
+                          <span class="lang-ko">{a.name}</span>
+                          <span class="lang-en">{a.nameEn}</span>
+                        </>
+                      ) : a.name}
+                    </span>
                     <span class="text-muted-foreground text-sm ml-2">{a.issuer}</span>
-                    {a.description && <span class="text-sm ml-2">{a.description}</span>}
+                    {(a.description || a.descriptionEn) && (
+                      <span class="text-sm ml-2">
+                        {a.descriptionEn ? (
+                          <>
+                            <span class="lang-ko">{a.description}</span>
+                            <span class="lang-en">{a.descriptionEn}</span>
+                          </>
+                        ) : a.description}
+                      </span>
+                    )}
                   </div>
                   <span class="text-sm text-muted-foreground font-mono">{a.date}</span>
                 </li>
@@ -222,7 +323,8 @@ const { name, title, summary, contact, experience, education, skills, projects, 
         <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
         </svg>
-        인쇄 / PDF 저장
+        <span class="lang-ko">인쇄 / PDF 저장</span>
+        <span class="lang-en">Print / Save as PDF</span>
       </button>
     </div>
 

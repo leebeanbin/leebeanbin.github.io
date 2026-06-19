@@ -1,0 +1,152 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Card from "@/components/Card.astro";
+import { getSortedPosts } from "@/utils/getSortedPosts";
+import { getUniqueTags } from "@/utils/getUniqueTags";
+import config from "@/config";
+
+const posts = await getCollection("posts", ({ data }) => !data.draft);
+const sortedPosts = getSortedPosts(posts);
+const uniqueTags = getUniqueTags(posts);
+---
+
+<Layout title={`포스트 | Posts | ${config.site.title}`}>
+  <Header />
+
+  <main id="main-content" class="app-layout pb-16 pt-8">
+
+    <!-- 타이틀 -->
+    <div class="border-b border-border pb-6 mb-8">
+      <h1 class="text-2xl font-semibold sm:text-3xl mb-2">
+        <span class="lang-ko">포스트</span>
+        <span class="lang-en">Posts</span>
+      </h1>
+      <p class="text-sm text-muted-foreground italic">
+        <span class="lang-ko">작성한 모든 글</span>
+        <span class="lang-en">All posts</span>
+        {sortedPosts.length > 0 && (
+          <span id="post-count" class="ml-2 font-mono text-xs">
+            (<span class="lang-ko">{sortedPosts.length}개</span>
+            <span class="lang-en">{sortedPosts.length} posts</span>)
+          </span>
+        )}
+      </p>
+    </div>
+
+    <!-- 태그 필터 칩 -->
+    {uniqueTags.length > 0 && (
+      <div class="mb-8 flex flex-wrap gap-2 items-center">
+        <span class="text-xs font-mono text-muted-foreground mr-1 shrink-0">
+          <span class="lang-ko">필터:</span>
+          <span class="lang-en">Filter:</span>
+        </span>
+        <button
+          class="tag-filter-btn active-filter border border-border rounded-full px-3 py-1 text-xs font-mono hover:border-accent transition-colors"
+          data-tag="__all__"
+        >
+          <span class="lang-ko">전체</span>
+          <span class="lang-en">All</span>
+          <span class="ml-1 text-muted-foreground">({sortedPosts.length})</span>
+        </button>
+        {uniqueTags.map(({ tag, tagName }) => {
+          const count = sortedPosts.filter(p => p.data.tags?.includes(tag)).length;
+          return (
+            <button
+              class="tag-filter-btn border border-border rounded-full px-3 py-1 text-xs font-mono hover:border-accent transition-colors"
+              data-tag={tag}
+            >
+              #{tagName}
+              <span class="ml-1 text-muted-foreground">({count})</span>
+            </button>
+          );
+        })}
+      </div>
+    )}
+
+    <!-- 포스트 목록 -->
+    {sortedPosts.length > 0 ? (
+      <ul id="posts-list" class="space-y-2">
+        {sortedPosts.map(data => (
+          <Card variant="h2" {...data} />
+        ))}
+      </ul>
+    ) : (
+      <div class="py-16 text-center border border-dashed border-border rounded-xl">
+        <p class="text-muted-foreground text-sm mb-1">
+          <span class="lang-ko">아직 작성된 글이 없습니다.</span>
+          <span class="lang-en">No posts yet.</span>
+        </p>
+        <p class="text-xs text-muted-foreground">
+          <code class="bg-muted px-1.5 py-0.5 rounded">src/content/posts/</code>
+          <span class="lang-ko">에 마크다운 파일을 추가하면 바로 표시됩니다.</span>
+          <span class="lang-en"> — add a markdown file to get started.</span>
+        </p>
+      </div>
+    )}
+
+    <!-- 필터 결과 없음 -->
+    <div id="no-results" class="hidden py-16 text-center border border-dashed border-border rounded-xl">
+      <p class="text-muted-foreground text-sm">
+        <span class="lang-ko">이 태그의 포스트가 없습니다.</span>
+        <span class="lang-en">No posts with this tag.</span>
+      </p>
+    </div>
+
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .tag-filter-btn.active-filter {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+</style>
+
+<script>
+  function initTagFilter() {
+    const btns = document.querySelectorAll<HTMLButtonElement>(".tag-filter-btn");
+    const cards = document.querySelectorAll<HTMLElement>(".post-card");
+    const noResults = document.querySelector<HTMLElement>("#no-results");
+
+    let activeTag = "__all__";
+
+    function applyFilter(tag: string) {
+      activeTag = tag;
+
+      // 버튼 active 상태
+      btns.forEach(btn => {
+        btn.classList.toggle("active-filter", btn.dataset.tag === tag);
+      });
+
+      // 카드 show/hide
+      let visible = 0;
+      cards.forEach(card => {
+        const tagsRaw = card.dataset.tags ?? "[]";
+        const tags: string[] = JSON.parse(tagsRaw);
+        const show = tag === "__all__" || tags.includes(tag);
+        card.style.display = show ? "" : "none";
+        if (show) visible++;
+      });
+
+      if (noResults) {
+        noResults.classList.toggle("hidden", visible > 0 || tag === "__all__");
+      }
+    }
+
+    btns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        applyFilter(btn.dataset.tag ?? "__all__");
+      });
+    });
+
+    applyFilter("__all__");
+  }
+
+  initTagFilter();
+  document.addEventListener("astro:after-swap", initTagFilter);
+</script>
