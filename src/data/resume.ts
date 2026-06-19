@@ -6,7 +6,7 @@
 export type ResumeData = {
   name: { ko: string; en: string };
   title: { ko: string; en: string };
-  photo?: string;           // 증명사진 URL 또는 /uploads/photo.jpg
+  photo?: string;
   summary: string;
   summaryEn?: string;
   contact: {
@@ -14,7 +14,7 @@ export type ResumeData = {
     github: string;
     linkedin?: string;
     blog?: string;
-    location?: string;      // 예: "Seoul, South Korea"
+    location?: string;
     phone?: string;
   };
   experience: Array<{
@@ -49,6 +49,15 @@ export type ResumeData = {
     url: string;
     summary: string;
     summaryEn?: string;
+    tags: string[];
+  }>;
+  openSource: Array<{
+    name: string;           // 프로젝트명
+    url: string;            // GitHub URL
+    role: string;           // 역할 (예: "Co-author", "Contributor")
+    roleEn?: string;
+    description: string;
+    descriptionEn?: string;
     tags: string[];
   }>;
   certifications: Array<{
@@ -98,37 +107,53 @@ Production experience with Python & Java, and hands-on AI pipeline development.`
   // ── 경력 ─────────────────────────────────────────────────────────────────
   experience: [
     {
-      company: "회사명을 입력하세요",
-      role: "직책 / 역할",
-      roleEn: "Role Title",
-      period: "2025.01 – 현재",
-      location: "서울",
-      description: "팀/프로젝트 한 줄 설명",
-      descriptionEn: "One-line team or project description",
+      company: "Config Intelligence",
+      role: "Backend / AI Engineer",
+      roleEn: "Backend / AI Engineer",
+      period: "2025.XX – 현재",   // TODO: 실제 입사 월로 수정
+      location: "Seoul",
+      description: "",
+      descriptionEn: "",
       bullets: [
-        "주요 업무 또는 성과를 입력하세요",
-        "수치가 있으면 넣으면 좋습니다 — 예: API 응답속도 40% 개선",
-        "사용한 기술 스택도 언급하면 좋아요",
+        "담당 업무를 입력해주세요",
       ],
       bulletsEn: [
-        "Describe your key responsibilities or achievements",
-        "Include metrics when possible — e.g., Reduced API latency by 40%",
-        "Mention the tech stack you used",
+        "Please fill in your responsibilities",
       ],
-      tags: ["Python", "FastAPI", "PostgreSQL"],
+      tags: ["Python", "FastAPI"],
     },
-    // 경력이 더 있으면 아래에 복사해서 추가
-    // {
-    //   company: "",
-    //   role: "",
-    //   roleEn: "",
-    //   period: "",
-    //   description: "",
-    //   descriptionEn: "",
-    //   bullets: [],
-    //   bulletsEn: [],
-    //   tags: [],
-    // },
+    {
+      company: "계약직 회사명",   // TODO: 실제 회사명으로 수정
+      role: "Backend Developer",
+      roleEn: "Backend Developer",
+      period: "2024.XX – 2025.XX",  // TODO: 실제 기간으로 수정
+      location: "Seoul",
+      description: "",
+      descriptionEn: "",
+      bullets: [
+        "담당 업무를 입력해주세요",
+      ],
+      bulletsEn: [
+        "Please fill in your responsibilities",
+      ],
+      tags: ["Python"],
+    },
+    {
+      company: "위커밋",
+      role: "백엔드 엔지니어 인턴",
+      roleEn: "Backend Engineer Intern",
+      period: "2023.XX – 2024.XX",  // TODO: 실제 기간으로 수정
+      location: "Seoul",
+      description: "",
+      descriptionEn: "",
+      bullets: [
+        "담당 업무를 입력해주세요",
+      ],
+      bulletsEn: [
+        "Please fill in your responsibilities",
+      ],
+      tags: ["Python", "FastAPI"],
+    },
   ],
 
   // ── 학력 ─────────────────────────────────────────────────────────────────
@@ -192,6 +217,19 @@ Production experience with Python & Java, and hands-on AI pipeline development.`
       summary: "DDD + Hexagonal Architecture 공간예약 플랫폼",
       summaryEn: "Space reservation platform with DDD + Hexagonal Architecture",
       tags: ["Spring Boot", "Kafka", "Elasticsearch"],
+    },
+  ],
+
+  // ── 오픈소스 기여 ──────────────────────────────────────────────────────────
+  openSource: [
+    {
+      name: "langchain-ai/langchain",
+      url: "https://github.com/langchain-ai/langchain",
+      role: "Co-author",
+      roleEn: "Co-author",
+      description: "LangChain 공식 문서 및 튜토리얼 공동 저자. Python LLM 통합 예제 기여.",
+      descriptionEn: "Co-authored official LangChain documentation and tutorials. Contributed Python LLM integration examples.",
+      tags: ["Python", "LangChain", "LLM"],
     },
   ],
 

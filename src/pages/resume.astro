@@ -6,7 +6,7 @@ import config from "@/config";
 import { resume } from "@/data/resume";
 import { TECH_COLORS } from "@/data/techColors";
 
-const { name, title, photo, summary, summaryEn, contact, experience, education, skills, projects, certifications, awards } = resume;
+const { name, title, photo, summary, summaryEn, contact, experience, education, skills, projects, openSource, certifications, awards } = resume;
 
 const CATEGORY_COLORS: Record<string, string> = {
   "Languages":        "#3178C6",
@@ -277,6 +277,54 @@ function chipStyle(tech: string): string {
             <span class="lang-en">→ View all projects</span>
           </a>
         </p>
+      </section>
+    )}
+
+    <!-- ══ OPEN SOURCE ════════════════════════════════════════════════════ -->
+    {openSource.length > 0 && (
+      <section class="mb-8">
+        <h2 class="text-xs font-bold uppercase tracking-widest text-accent mb-4 pb-1.5 border-b border-border">
+          <span class="lang-ko">오픈소스 기여</span>
+          <span class="lang-en">Open Source</span>
+        </h2>
+        <div class="space-y-4">
+          {openSource.map(os => (
+            <div class="relative pl-4 border-l-2 border-border hover:border-accent transition-colors group">
+              <div class="absolute -left-[5px] top-1.5 size-2 rounded-full bg-border group-hover:bg-accent transition-colors"></div>
+              <div class="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 mb-1.5">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <a href={os.url} target="_blank" rel="noopener"
+                     class="font-mono font-semibold text-sm hover:text-accent transition-colors">
+                    {os.name} ↗
+                  </a>
+                  <span class="text-xs border border-accent/30 text-accent rounded-full px-2 py-0.5 font-mono">
+                    {os.roleEn ? (
+                      <>
+                        <span class="lang-ko">{os.role}</span>
+                        <span class="lang-en">{os.roleEn}</span>
+                      </>
+                    ) : os.role}
+                  </span>
+                </div>
+              </div>
+              <p class="text-sm text-muted-foreground mb-2">
+                {os.descriptionEn ? (
+                  <>
+                    <span class="lang-ko">{os.description}</span>
+                    <span class="lang-en">{os.descriptionEn}</span>
+                  </>
+                ) : os.description}
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                {os.tags.map(tag => (
+                  <span class="tech-chip border rounded-full px-2 py-0.5 font-mono text-xs cursor-default transition-all" style={chipStyle(tag)}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
     )}
 
