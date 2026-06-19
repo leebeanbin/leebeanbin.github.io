@@ -19,14 +19,14 @@ const { name, contact } = resume;
   <main id="main-content" class="app-layout py-12 sm:py-16">
 
     <!-- 헤더 -->
-    <div class="border-b border-border pb-10 mb-10">
+    <div class="border-b border-border pb-10 mb-10 animate-fade-in-up">
       <p class="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">About</p>
       <div class="flex flex-wrap items-baseline gap-3 mb-1">
-        <h1 class="text-3xl sm:text-4xl font-bold">
+        <h1 class="font-bold" style="font-size: var(--text-fluid-3xl)">
           <span class="lang-ko">{name.ko}</span>
           <span class="lang-en">{name.en}</span>
         </h1>
-        <span class="text-xl text-muted-foreground font-light">
+        <span class="text-muted-foreground font-light" style="font-size: var(--text-fluid-xl)">
           <span class="lang-ko">{name.en}</span>
           <span class="lang-en">{name.ko}</span>
         </span>
@@ -51,13 +51,16 @@ const { name, contact } = resume;
         <span class="lang-ko">GitHub 기여</span>
         <span class="lang-en">GitHub Contributions</span>
       </h2>
-      <div class="overflow-x-auto rounded-xl border border-border p-4">
+      <div class="relative overflow-x-auto rounded-xl border border-border p-4">
+        <!-- 스켈레톤 (이미지 로딩 전 표시) -->
+        <div id="gh-skeleton" class="h-32 w-full rounded-lg bg-muted animate-pulse"></div>
         <!-- Light mode -->
         <img
           src="https://ghchart.rshah.org/0284c7/leebeanbin"
           alt="GitHub contribution graph"
-          class="w-full dark:hidden"
+          class="w-full dark:hidden hidden"
           loading="lazy"
+          onload="this.classList.remove('hidden'); document.getElementById('gh-skeleton')?.remove();"
         />
         <!-- Dark mode -->
         <img
@@ -65,6 +68,7 @@ const { name, contact } = resume;
           alt="GitHub contribution graph"
           class="w-full hidden dark:block"
           loading="lazy"
+          onload="document.getElementById('gh-skeleton')?.remove();"
         />
       </div>
       <a href={contact.github} target="_blank" rel="noopener"

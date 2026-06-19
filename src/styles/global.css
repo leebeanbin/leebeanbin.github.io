@@ -16,7 +16,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
   body {
-    word-break: keep-all;           /* 한국어 단어 중간 줄바꿈 방지 */
+    word-break: keep-all;
     overflow-wrap: break-word;
     letter-spacing: -0.011em;
   }
@@ -31,6 +31,34 @@
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+}
+
+/* ── 진입 애니메이션 ────────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp var(--duration-slow, 400ms) ease both;
+}
+
+/* 스태거: CSS 변수로 delay 제어 */
+.animate-delay-1 { animation-delay: 80ms; }
+.animate-delay-2 { animation-delay: 160ms; }
+.animate-delay-3 { animation-delay: 240ms; }
+.animate-delay-4 { animation-delay: 320ms; }
+
+/* ── 접근성: 움직임 최소화 선호 ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  [class*="animate-delay"] {
+    animation: none !important;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }
 
