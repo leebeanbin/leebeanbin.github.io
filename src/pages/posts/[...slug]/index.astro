@@ -690,7 +690,7 @@ const ogImage = ogImageUrl
           </div>
         </header>
         <div style="flex:1;overflow-y:auto;display:flex;align-items:center;justify-content:center;padding:48px 24px 32px;">
-          <div id="sl-content" class="sl-prose" style="max-width:660px;width:100%;transition:opacity 110ms ease,transform 110ms ease;"></div>
+          <div id="sl-content" class="app-prose max-w-none" style="max-width:660px;width:100%;transition:opacity 110ms ease,transform 110ms ease;"></div>
         </div>
         <footer style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid rgba(255,255,255,0.07);">
           <button id="sl-prev" style="display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);border-radius:7px;padding:7px 14px;font-size:13px;cursor:pointer;transition:opacity 150ms;"> ← </button>
@@ -757,71 +757,16 @@ const ogImage = ogImageUrl
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
   }
+</style>
 
-  /* ── 슬라이드 모드 prose 스타일 (다크 배경 강제) ─────────────────────── */
-  .sl-prose {
-    font-family: var(--font-app, sans-serif);
-    font-size: 1.0625rem;
-    line-height: 1.8;
-    color: rgba(244, 244, 245, 0.88);
+<!-- 슬라이드 오버레이는 JS로 동적 생성되므로 scoped 해시가 안 붙음 → is:global 필요 -->
+<style is:global>
+  /* 슬라이드 overlay: app-prose가 prose 기본 max-width를 가지므로 해제 */
+  #sl-overlay #sl-content.app-prose {
+    max-width: none;
   }
-  .sl-prose h1, .sl-prose h2, .sl-prose h3, .sl-prose h4 {
-    color: #ffffff;
-    font-weight: 700;
-    letter-spacing: -0.024em;
-    line-height: 1.22;
-    margin-top: 1.6em;
-    margin-bottom: 0.6em;
-  }
-  .sl-prose h1 { font-size: 1.875rem; }
-  .sl-prose h2 { font-size: 1.5rem; }
-  .sl-prose h3 { font-size: 1.25rem; }
-  .sl-prose p  { margin-bottom: 1em; }
-  .sl-prose a  { color: #60a5fa; text-decoration: underline; text-underline-offset: 3px; }
-  .sl-prose strong { color: #ffffff; }
-  .sl-prose em     { color: rgba(244,244,245,0.75); }
-  .sl-prose ul, .sl-prose ol { padding-left: 1.5em; margin-bottom: 1em; }
-  .sl-prose li { margin-bottom: 0.4em; }
-  .sl-prose li::marker { color: #60a5fa; }
-  .sl-prose code {
-    background: rgba(255,255,255,0.1);
-    color: #93c5fd;
-    border-radius: 4px;
-    padding: 0.15em 0.4em;
-    font-size: 0.875em;
-    font-family: var(--font-mono, monospace);
-  }
-  .sl-prose pre {
-    background: #0f0f12 !important;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    padding: 1rem 1.25rem;
-    overflow-x: auto;
-    margin-bottom: 1em;
-  }
-  .sl-prose pre code { background: none; padding: 0; color: inherit; }
-  .sl-prose blockquote {
-    border-left: 3px solid #3b82f6;
-    padding-left: 1rem;
-    color: rgba(244,244,245,0.6);
-    margin-bottom: 1em;
-  }
-  .sl-prose hr {
-    border: none;
-    height: 1px;
-    background: rgba(255,255,255,0.12);
-    margin: 2rem 0;
-  }
-  .sl-prose img {
-    border-radius: 8px;
-    max-width: 100%;
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-  /* 다크 shiki 코드 블록 강제 */
-  #sl-overlay .astro-code {
-    background: #0f0f12 !important;
-  }
-  #sl-overlay .astro-code span {
-    color: var(--shiki-dark, inherit) !important;
+  /* app-prose의 hr::after 장식("· · ·")은 슬라이드에서 숨김 */
+  #sl-overlay .app-prose hr::after {
+    display: none;
   }
 </style>
