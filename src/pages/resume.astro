@@ -173,26 +173,28 @@ function chipStyle(tech: string): string {
                 </p>
               )}
 
-              <ul class="space-y-1.5 mb-3">
-                {exp.bulletsEn ? (
-                  exp.bullets.map((b, i) => (
-                    <li class="text-sm flex gap-2.5">
-                      <span class="text-accent shrink-0 mt-0.5 select-none">▸</span>
-                      <span>
-                        <span class="lang-ko">{b}</span>
-                        <span class="lang-en">{exp.bulletsEn![i] ?? b}</span>
-                      </span>
-                    </li>
-                  ))
-                ) : (
-                  exp.bullets.map(b => (
-                    <li class="text-sm flex gap-2.5">
-                      <span class="text-accent shrink-0 mt-0.5 select-none">▸</span>
-                      <span>{b}</span>
-                    </li>
-                  ))
-                )}
-              </ul>
+              {exp.bullets.some(b => !b.includes("입력해주세요")) && (
+                <ul class="space-y-1.5 mb-3">
+                  {exp.bulletsEn ? (
+                    exp.bullets.map((b, i) => (
+                      <li class="text-sm flex gap-2.5">
+                        <span class="text-accent shrink-0 mt-0.5 select-none">▸</span>
+                        <span>
+                          <span class="lang-ko">{b}</span>
+                          <span class="lang-en">{exp.bulletsEn![i] ?? b}</span>
+                        </span>
+                      </li>
+                    ))
+                  ) : (
+                    exp.bullets.map(b => (
+                      <li class="text-sm flex gap-2.5">
+                        <span class="text-accent shrink-0 mt-0.5 select-none">▸</span>
+                        <span>{b}</span>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              )}
 
               <div class="flex flex-wrap gap-1.5">
                 {exp.tags.map(tag => (
@@ -475,5 +477,9 @@ function chipStyle(tech: string): string {
       background: transparent !important;
     }
     .resume-header img { display: block !important; }
+    /* 섹션 중간에서 페이지 잘림 방지 */
+    section { break-inside: avoid; }
+    .relative.pl-4 { break-inside: avoid; }
+    .rounded-xl { break-inside: avoid; }
   }
 </style>

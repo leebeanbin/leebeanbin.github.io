@@ -117,15 +117,26 @@ const uniqueTags = getUniqueTags(posts);
     const cards = document.querySelectorAll<HTMLElement>(".post-card");
     const noResults = document.querySelector<HTMLElement>("#no-results");
 
-    let activeTag = "__all__";
+    const params = new URLSearchParams(window.location.search);
+    const initialTag = params.get("tag") ?? "__all__";
 
-    function applyFilter(tag: string) {
-      activeTag = tag;
-
+    function applyFilter(tag: string, pushHistory = true) {
       // 버튼 active 상태
       btns.forEach(btn => {
         btn.classList.toggle("active-filter", btn.dataset.tag === tag);
       });
+
+      // URL param 업데이트 (뒤로가기 시 복원)
+      if (pushHistory) {
+        const next = new URLSearchParams(window.location.search);
+        if (tag === "__all__") {
+          next.delete("tag");
+        } else {
+          next.set("tag", tag);
+        }
+        const search = next.toString();
+        history.replaceState(null, "", search ? `?${search}` : window.location.pathname);
+      }
 
       // 카드 show/hide (opacity fade)
       const list = document.querySelector<HTMLElement>("#posts-list");
@@ -155,7 +166,7 @@ const uniqueTags = getUniqueTags(posts);
       });
     });
 
-    applyFilter("__all__");
+    applyFilter(initialTag, false);
   }
 
   initTagFilter();

@@ -26,7 +26,10 @@ const recentPosts   = sortedPosts.filter(({ data }) => !data.featured);
 const { hero } = siteContent;
 ---
 
-<Layout>
+<Layout
+  title={config.site.title}
+  description={hero.bioEn ?? hero.bio}
+>
   <Header />
   <main id="main-content" data-layout="index" data-home-path={homePath} class="app-layout">
 
@@ -88,14 +91,20 @@ const { hero } = siteContent;
           <span class="lang-ko">최근 포스트</span>
           <span class="lang-en">Recent Posts</span>
         </h2>
-        {sortedPosts.length > postsConfig.perIndex && (
-          <LinkButton href={getRelativeLocaleUrl(locale, "posts")}
-            class="text-xs text-muted-foreground hover:text-accent flex items-center gap-1 transition-colors duration-150">
-            <span class="lang-ko">전체 보기</span>
-            <span class="lang-en">All posts</span>
-            <IconArrowRight class="size-3" />
-          </LinkButton>
-        )}
+        <div class="flex items-center gap-3">
+          <a href="/rss.xml" title="RSS Feed"
+             class="text-muted-foreground hover:text-accent transition-colors duration-150">
+            <IconRss class="size-4" />
+          </a>
+          {sortedPosts.length > postsConfig.perIndex && (
+            <LinkButton href={getRelativeLocaleUrl(locale, "posts")}
+              class="text-xs text-muted-foreground hover:text-accent flex items-center gap-1 transition-colors duration-150">
+              <span class="lang-ko">전체 보기</span>
+              <span class="lang-en">All posts</span>
+              <IconArrowRight class="size-3" />
+            </LinkButton>
+          )}
+        </div>
       </div>
 
       {recentPosts.length > 0 ? (
@@ -104,6 +113,16 @@ const { hero } = siteContent;
             <Card variant="h3" {...data} />
           ))}
         </ul>
+      ) : sortedPosts.length > 0 ? (
+        <p class="text-sm text-muted-foreground py-4">
+          <span class="lang-ko">모든 포스트가 추천 포스트로 표시되어 있습니다. →</span>
+          <span class="lang-en">All posts are featured. →</span>
+          {" "}
+          <a href="/posts" class="text-accent hover:underline">
+            <span class="lang-ko">전체 보기</span>
+            <span class="lang-en">View all</span>
+          </a>
+        </p>
       ) : (
         <div class="py-12 text-center border border-dashed border-border rounded-xl">
           <p class="text-muted-foreground text-sm mb-1">
