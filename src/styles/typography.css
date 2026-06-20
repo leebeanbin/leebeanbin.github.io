@@ -4,6 +4,10 @@
   /* ===== Override default Tailwind Typography styles ===== */
   .app-prose {
     @apply prose;
+    /* 16px 기본보다 약간 큰 17px — 장문 읽기 최적화 */
+    font-size: 1.0625rem;
+    /* 행간 1.8 — 기술 블로그 장문에 적합한 여유 */
+    line-height: 1.8;
 
     h1,
     h2,
@@ -11,10 +15,8 @@
     h4,
     th {
       @apply text-foreground mb-3;
-    }
-
-    h3 {
-      @apply italic;
+      line-height: 1.3;
+      letter-spacing: -0.022em;
     }
 
     p,
@@ -40,7 +42,27 @@
     }
 
     hr {
-      @apply border-border;
+      border: none;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5rem 0;
+      position: relative;
+      overflow: visible;
+    }
+    /* 슬라이드 구분선: · · · 센터 인디케이터 */
+    hr::after {
+      content: "· · ·";
+      display: inline-block;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--background);
+      padding: 0 0.875rem;
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+      letter-spacing: 0.2em;
+      opacity: 0.6;
     }
 
     img {

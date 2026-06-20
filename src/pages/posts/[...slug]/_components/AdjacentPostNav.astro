@@ -1,6 +1,4 @@
 ---
-import IconArrowLeft from "@/assets/icons/IconArrowLeft.svg";
-import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
 import { getPostUrl } from "@/utils/getPostPaths";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
@@ -21,33 +19,32 @@ const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
 ---
 
-<div data-pagefind-ignore class="my-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-  {
-    prevPost && (
-      <a
-        href={getPostUrl(prevPost.id, prevPost.filePath, locale)}
-        class="flex w-full gap-1 hover:opacity-75"
-      >
-        <IconArrowLeft class="inline-block flex-none rtl:rotate-180" />
-        <div>
-          <span>{t.post.previousPost}</span>
-          <div class="text-accent/85 text-sm">{prevPost.title}</div>
-        </div>
-      </a>
-    )
-  }
-  {
-    nextPost && (
-      <a
-        href={getPostUrl(nextPost.id, nextPost.filePath, locale)}
-        class="flex w-full justify-end gap-1 text-end hover:opacity-75 sm:col-start-2"
-      >
-        <div>
-          <span>{t.post.nextPost}</span>
-          <div class="text-accent/85 text-sm">{nextPost.title}</div>
-        </div>
-        <IconArrowRight class="inline-block flex-none rtl:rotate-180" />
-      </a>
-    )
-  }
-</div>
+<nav data-pagefind-ignore class="my-8 grid grid-cols-1 gap-3 sm:grid-cols-2" aria-label="Post navigation">
+  {prevPost ? (
+    <a
+      href={getPostUrl(prevPost.id, prevPost.filePath, locale)}
+      class="group flex items-start gap-3 rounded-xl border border-border p-4
+             hover:border-accent/40 transition-colors duration-150"
+    >
+      <span class="mt-0.5 shrink-0 text-muted-foreground group-hover:text-accent transition-colors">←</span>
+      <div class="min-w-0">
+        <p class="text-xs text-muted-foreground mb-1 font-mono uppercase tracking-wide">{t.post.previousPost}</p>
+        <p class="text-sm font-medium text-foreground line-clamp-2 leading-snug">{prevPost.title}</p>
+      </div>
+    </a>
+  ) : <div></div>}
+
+  {nextPost && (
+    <a
+      href={getPostUrl(nextPost.id, nextPost.filePath, locale)}
+      class="group flex items-start gap-3 rounded-xl border border-border p-4 text-right
+             hover:border-accent/40 transition-colors duration-150 sm:col-start-2"
+    >
+      <div class="min-w-0 flex-1">
+        <p class="text-xs text-muted-foreground mb-1 font-mono uppercase tracking-wide">{t.post.nextPost}</p>
+        <p class="text-sm font-medium text-foreground line-clamp-2 leading-snug">{nextPost.title}</p>
+      </div>
+      <span class="mt-0.5 shrink-0 text-muted-foreground group-hover:text-accent transition-colors">→</span>
+    </a>
+  )}
+</nav>

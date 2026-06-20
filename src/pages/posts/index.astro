@@ -8,11 +8,23 @@ import IconEdit from "@/assets/icons/IconEdit.svg";
 import IconSearch from "@/assets/icons/IconSearch.svg";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { getUniqueTags } from "@/utils/getUniqueTags";
+import { getPostCategory } from "@/utils/getPostCategory";
 import config from "@/config";
 
 const posts = await getCollection("posts", ({ data }) => !data.draft);
 const sortedPosts = getSortedPosts(posts);
 const uniqueTags = getUniqueTags(posts);
+
+// 카테고리(폴더)별 그룹화
+type PostGroup = { category: string | null; posts: typeof sortedPosts };
+const groupedPosts = sortedPosts.reduce<PostGroup[]>((acc, post) => {
+  const cat = getPostCategory(post.id);
+  const group = acc.find(g => g.category === cat);
+  if (group) group.posts.push(post);
+  else acc.push({ category: cat, posts: [post] });
+  return acc;
+}, []);
+const hasCategories = groupedPosts.some(g => g.category !== null);
 ---
 
 <Layout title={`포스트 | Posts | ${config.site.title}`}>
@@ -46,22 +58,19 @@ const uniqueTags = getUniqueTags(posts);
           <span class="lang-en">Filter:</span>
         </span>
         <button
-          class="tag-filter-btn active-filter border border-border rounded-full px-3 py-1 text-xs font-mono hover:border-accent transition-colors"
+          class="tag-filter-btn active-filter"
           data-tag="__all__"
         >
           <span class="lang-ko">전체</span>
           <span class="lang-en">All</span>
-          <span class="ml-1 text-muted-foreground">({sortedPosts.length})</span>
+          <span class="count">({sortedPosts.length})</span>
         </button>
         {uniqueTags.map(({ tag, tagName }) => {
           const count = sortedPosts.filter(p => p.data.tags?.includes(tag)).length;
           return (
-            <button
-              class="tag-filter-btn border border-border rounded-full px-3 py-1 text-xs font-mono hover:border-accent transition-colors"
-              data-tag={tag}
-            >
+            <button class="tag-filter-btn" data-tag={tag}>
               #{tagName}
-              <span class="ml-1 text-muted-foreground">({count})</span>
+              <span class="count">({count})</span>
             </button>
           );
         })}
@@ -70,11 +79,30 @@ const uniqueTags = getUniqueTags(posts);
 
     <!-- 포스트 목록 -->
     {sortedPosts.length > 0 ? (
-      <ul id="posts-list" class="space-y-2 transition-opacity duration-150">
-        {sortedPosts.map(data => (
-          <Card variant="h2" {...data} />
-        ))}
-      </ul>
+      <div id="posts-list" class="transition-opacity duration-150">
+        {hasCategories ? (
+          groupedPosts.map(({ category, posts }) => (
+            <div class="post-group mb-6" data-category={category ?? "__root__"}>
+              {category && (
+                <div class="flex items-center gap-3 mt-8 mb-4 first:mt-0">
+                  <span class="text-xs font-mono font-semibold uppercase tracking-widest text-muted-foreground">
+                    {category}
+                  </span>
+                  <div class="flex-1 h-px bg-border"></div>
+                  <span class="text-xs font-mono text-muted-foreground/50">{posts.length}</span>
+                </div>
+              )}
+              <ul class="space-y-2">
+                {posts.map(data => <Card variant="h2" {...data} />)}
+              </ul>
+            </div>
+          ))
+        ) : (
+          <ul class="space-y-2">
+            {sortedPosts.map(data => <Card variant="h2" {...data} />)}
+          </ul>
+        )}
+      </div>
     ) : (
       <div class="py-20 text-center border border-dashed border-border rounded-xl">
         <IconEdit class="size-10 mx-auto text-muted-foreground mb-4" />
@@ -105,9 +133,45 @@ const uniqueTags = getUniqueTags(posts);
 </Layout>
 
 <style>
+  .tag-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--muted-foreground);
+    background: transparent;
+    cursor: pointer;
+    transition: border-color 150ms ease, color 150ms ease, background-color 150ms ease, transform 100ms ease;
+    user-select: none;
+  }
+  .tag-filter-btn:hover {
+    border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+    color: var(--accent);
+  }
+  .tag-filter-btn:active {
+    transform: scale(0.96);
+  }
   .tag-filter-btn.active-filter {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .tag-filter-btn .count {
+    color: var(--muted-foreground);
+    opacity: 0.7;
+  }
+  .tag-filter-btn.active-filter .count {
+    color: var(--accent);
+    opacity: 0.7;
+  }
+
+  /* 카드 필터 애니메이션 */
+  #posts-list {
+    transition: opacity 120ms ease;
   }
 </style>
 
@@ -138,15 +202,13 @@ const uniqueTags = getUniqueTags(posts);
         history.replaceState(null, "", search ? `?${search}` : window.location.pathname);
       }
 
-      // 카드 show/hide (opacity fade)
       const list = document.querySelector<HTMLElement>("#posts-list");
-      if (list) list.style.opacity = "0.4";
+      if (list) list.style.opacity = "0";
 
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         let visible = 0;
         cards.forEach(card => {
-          const tagsRaw = card.dataset.tags ?? "[]";
-          const tags: string[] = JSON.parse(tagsRaw);
+          const tags: string[] = JSON.parse(card.dataset.tags ?? "[]");
           const show = tag === "__all__" || tags.includes(tag);
           card.style.display = show ? "" : "none";
           if (show) visible++;
@@ -157,7 +219,7 @@ const uniqueTags = getUniqueTags(posts);
         }
 
         if (list) list.style.opacity = "1";
-      });
+      }, 100);
     }
 
     btns.forEach(btn => {

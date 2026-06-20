@@ -3,7 +3,6 @@ import type { Page } from "astro";
 import type { CollectionEntry } from "astro:content";
 import IconArrowLeft from "@/assets/icons/IconArrowLeft.svg";
 import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
-import LinkButton from "./LinkButton.astro";
 import { useTranslations } from "@/i18n";
 
 type Props = {
@@ -11,36 +10,53 @@ type Props = {
 };
 
 const { page } = Astro.props;
-
 const t = useTranslations(Astro.currentLocale);
 ---
 
-{
-  page.lastPage > 1 && (
-    <nav
-      class="mt-auto mb-8 flex justify-center gap-4"
-      role="navigation"
-      aria-label="Pagination Navigation"
-    >
-      <LinkButton
-        disabled={!page.url.prev}
-        href={page.url.prev as string}
-        class:list={["select-none", { "opacity-50": !page.url.prev }]}
+{page.lastPage > 1 && (
+  <nav
+    class="mt-auto mb-8 flex items-center justify-center gap-3"
+    role="navigation"
+    aria-label="Pagination Navigation"
+  >
+    {page.url.prev ? (
+      <a
+        href={page.url.prev}
+        class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm
+               text-muted-foreground hover:border-accent/40 hover:text-accent hover:bg-muted/40
+               transition-all duration-150"
         aria-label={t.a11y.goToPreviousPage}
       >
-        <IconArrowLeft class="inline-block rtl:rotate-180" />
+        <IconArrowLeft class="size-3.5" />
         {t.pagination.prev}
-      </LinkButton>
+      </a>
+    ) : (
+      <span class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground/40 cursor-not-allowed select-none">
+        <IconArrowLeft class="size-3.5" />
+        {t.pagination.prev}
+      </span>
+    )}
+
+    <span class="font-mono text-xs text-muted-foreground tabular-nums px-1">
       {page.currentPage} / {page.lastPage}
-      <LinkButton
-        disabled={!page.url.next}
-        href={page.url.next as string}
-        class:list={["select-none", { "opacity-50": !page.url.next }]}
+    </span>
+
+    {page.url.next ? (
+      <a
+        href={page.url.next}
+        class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm
+               text-muted-foreground hover:border-accent/40 hover:text-accent hover:bg-muted/40
+               transition-all duration-150"
         aria-label={t.a11y.goToNextPage}
       >
         {t.pagination.next}
-        <IconArrowRight class="inline-block rtl:rotate-180" />
-      </LinkButton>
-    </nav>
-  )
-}
+        <IconArrowRight class="size-3.5" />
+      </a>
+    ) : (
+      <span class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground/40 cursor-not-allowed select-none">
+        {t.pagination.next}
+        <IconArrowRight class="size-3.5" />
+      </span>
+    )}
+  </nav>
+)}

@@ -51,7 +51,8 @@ const rssHref = getRelativeLocaleUrl(
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+    <!-- Inter Variable: opsz 축 지원 → font-optical-sizing 실제 작동 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
 
     <!-- Primary meta -->
     <title>{title}</title>
@@ -125,6 +126,24 @@ const rssHref = getRelativeLocaleUrl(
     <slot />
     <script>
       import "@/scripts/theme";
+    </script>
+    <script>
+      function initReveal() {
+        const observer = new IntersectionObserver(
+          entries => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("in-view");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.06, rootMargin: "0px 0px -48px 0px" }
+        );
+        document.querySelectorAll<HTMLElement>(".reveal").forEach(el => observer.observe(el));
+      }
+      initReveal();
+      document.addEventListener("astro:after-swap", initReveal);
     </script>
   </body>
 </html>

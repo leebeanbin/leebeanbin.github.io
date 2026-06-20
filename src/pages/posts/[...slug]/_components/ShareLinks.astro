@@ -29,26 +29,26 @@ const items = await Promise.all(
 );
 ---
 
-{
-  items.some(({ Icon }) => Icon) && (
-    <div class="flex flex-none flex-col items-center justify-center gap-1 md:items-start">
-      <span class="italic">{t.post.sharePostIntro}</span>
-      <div class="text-center">
-        {items.map(({ url, title, Icon }) =>
-          Icon ? (
-            <LinkButton
-              href={`${url}${pageUrl}`}
-              class="scale-90 p-2 hover:rotate-6 sm:p-1"
-              title={title}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Icon class="inline-block size-6 scale-125 fill-transparent stroke-current stroke-2 opacity-90 group-hover:fill-transparent sm:scale-110" />
-              <span class="sr-only">{title}</span>
-            </LinkButton>
-          ) : null
-        )}
-      </div>
+{items.some(({ Icon }) => Icon) && (
+  <div class="flex flex-col gap-2">
+    <p class="text-xs text-muted-foreground font-mono uppercase tracking-widest">{t.post.sharePostIntro}</p>
+    <div class="flex flex-wrap gap-1">
+      {items.map(({ url, title, Icon }) =>
+        Icon ? (
+          <LinkButton
+            href={`${url}${pageUrl}`}
+            class="group inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5
+                   text-xs text-muted-foreground hover:text-accent hover:border-accent/40
+                   transition-colors duration-150"
+            title={title}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon class="size-3.5 fill-transparent stroke-current stroke-2" />
+            <span>{title}</span>
+          </LinkButton>
+        ) : null
+      )}
     </div>
-  )
-}
+  </div>
+)}
