@@ -646,6 +646,9 @@ const ogImage = ogImageUrl
 
     let idx = 0;
     let el = null;
+    let wheelAccum = 0;
+    let wheelLocked = false;
+    let touchStartY = 0;
 
     function showSlide(n) {
       idx = Math.max(0, Math.min(n, slides.length - 1));
@@ -689,7 +692,7 @@ const ogImage = ogImageUrl
             <button id="sl-exit" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);border-radius:5px;padding:3px 9px;font-size:11px;font-family:monospace;cursor:pointer;">ESC</button>
           </div>
         </header>
-        <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
+        <div id="sl-scroll" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
           <div id="sl-content" class="app-prose max-w-none" style="max-width:660px;width:100%;margin:auto;padding:48px 24px 40px;transition:opacity 110ms ease,transform 110ms ease;"></div>
         </div>
         <footer style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid rgba(255,255,255,0.07);">
@@ -713,6 +716,9 @@ const ogImage = ogImageUrl
       el.querySelector("#sl-next").addEventListener("click", () => showSlide(idx + 1));
       el.querySelectorAll(".sl-dot").forEach(d => d.addEventListener("click", () => showSlide(Number(d.dataset.i))));
       document.addEventListener("keydown", onKey);
+      el.addEventListener("wheel", onWheel, { passive: false });
+      el.addEventListener("touchstart", onTouchStart, { passive: true });
+      el.addEventListener("touchend", onTouchEnd, { passive: true });
       showSlide(0);
     }
 
@@ -721,6 +727,8 @@ const ogImage = ogImageUrl
       el.style.opacity = "0";
       setTimeout(() => { el?.remove(); el = null; document.body.style.overflow = ""; }, 180);
       document.removeEventListener("keydown", onKey);
+      wheelAccum = 0;
+      wheelLocked = false;
     }
 
     function onKey(e) {
@@ -728,6 +736,41 @@ const ogImage = ogImageUrl
       if (e.key === "ArrowRight" || e.key === "ArrowDown") showSlide(idx + 1);
       if (e.key === "ArrowLeft"  || e.key === "ArrowUp")   showSlide(idx - 1);
       if (e.key === "Escape") exit();
+    }
+
+    function onWheel(e) {
+      if (wheelLocked) { e.preventDefault(); return; }
+
+      // 콘텐츠가 스크롤 가능하면 경계에서만 슬라이드 전환
+      const sc = el ? el.querySelector("#sl-scroll") : null;
+      if (sc) {
+        const atTop    = sc.scrollTop <= 1;
+        const atBottom = sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 1;
+        if (e.deltaY < 0 && !atTop) return;   // 위 스크롤 중
+        if (e.deltaY > 0 && !atBottom) return; // 아래 스크롤 중
+      }
+
+      e.preventDefault();
+      wheelAccum += e.deltaY;
+      if (Math.abs(wheelAccum) >= 50) {
+        const dir = wheelAccum > 0 ? 1 : -1;
+        wheelAccum = 0;
+        wheelLocked = true;
+        showSlide(idx + dir);
+        // 슬라이드 전환 후 스크롤 위치 초기화 + 쿨다운
+        if (sc) sc.scrollTop = 0;
+        setTimeout(() => { wheelLocked = false; }, 700);
+      }
+    }
+
+    function onTouchStart(e) {
+      touchStartY = e.touches[0].clientY;
+    }
+
+    function onTouchEnd(e) {
+      if (!el) return;
+      const delta = touchStartY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) > 48) showSlide(idx + (delta > 0 ? 1 : -1));
     }
 
     btn.addEventListener("click", enter);
