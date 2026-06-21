@@ -111,23 +111,25 @@ const skillGroups = siteContent.about.skillGroups;
       </a>
     </section>
 
-    <!-- 기술 스택 — 카테고리 그룹 -->
+    <!-- 기술 스택 — 카테고리 테이블 그리드 -->
     <section class="mb-12 reveal reveal-delay-2">
       <h2 class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6">
         <span class="inline-block size-1.5 rounded-full bg-muted-foreground"></span>
         <span class="lang-ko">주요 기술</span>
         <span class="lang-en">Tech Stack</span>
       </h2>
-      <div class="space-y-5">
+      <div class="divide-y divide-border border border-border rounded-xl overflow-hidden">
         {skillGroups.map(group => (
-          <div>
-            <p class="text-xs font-mono text-muted-foreground/70 uppercase tracking-widest mb-2.5">{group.label}</p>
-            <div class="flex flex-wrap gap-2">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 px-4 py-3.5">
+            <span class="w-24 shrink-0 text-xs font-mono text-muted-foreground/60 uppercase tracking-widest pt-0.5">
+              {group.label}
+            </span>
+            <div class="flex flex-wrap gap-1.5">
               {group.items.map(tech => {
                 const color = TECH_COLORS[tech];
                 return (
                   <span
-                    class="tech-chip border rounded-full px-3 py-1 text-sm font-mono cursor-default transition-all"
+                    class="tech-chip"
                     style={color ? `--chip-color:${color}` : ""}
                   >
                     {tech}
@@ -207,19 +209,6 @@ const skillGroups = siteContent.about.skillGroups;
 })} />
 
 <style>
-  .tech-chip {
-    background: color-mix(in srgb, var(--chip-color, var(--accent)) 10%, transparent);
-    color: var(--chip-color, var(--accent));
-    border-color: color-mix(in srgb, var(--chip-color, var(--accent)) 25%, transparent);
-    transition: background-color 150ms ease, border-color 150ms ease, transform 100ms ease;
-  }
-  .tech-chip:hover {
-    background: color-mix(in srgb, var(--chip-color, var(--accent)) 18%, transparent);
-    border-color: color-mix(in srgb, var(--chip-color, var(--accent)) 50%, transparent);
-  }
-  .tech-chip:active {
-    transform: scale(0.96);
-  }
   .stat-card {
     background: var(--background);
   }

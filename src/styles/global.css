@@ -269,6 +269,36 @@
   scroll-margin-block: 5rem;
 }
 
+/* ── 기술 스택 칩 — GitHub language indicator 스타일 ───────────────────── */
+/* 칩 자체는 중립(neutral), 브랜드 컬러는 왼쪽 작은 도트로만 표현         */
+.tech-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--foreground);
+  background: transparent;
+  cursor: default;
+  transition: background-color 120ms ease, border-color 120ms ease;
+  white-space: nowrap;
+}
+.tech-chip::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--chip-color, var(--muted-foreground));
+}
+.tech-chip:hover {
+  background: var(--muted);
+  border-color: color-mix(in srgb, var(--chip-color, var(--accent)) 40%, var(--border));
+}
+
 /* ── i18n ───────────────────────────────────────────────────────────────── */
 html[data-lang="en"] .lang-ko { display: none !important; }
 html[data-lang="ko"] .lang-en { display: none !important; }

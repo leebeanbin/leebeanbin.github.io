@@ -198,7 +198,7 @@ function chipStyle(tech: string): string {
 
               <div class="flex flex-wrap gap-1.5">
                 {exp.tags.map(tag => (
-                  <span class="tech-chip border rounded-full px-2 py-0.5 font-mono text-xs transition-all" style={chipStyle(tag)}>
+                  <span class="tech-chip" style={chipStyle(tag)}>
                     {tag}
                   </span>
                 ))}
@@ -228,7 +228,7 @@ function chipStyle(tech: string): string {
               </p>
               <div class="flex flex-wrap gap-1.5">
                 {group.items.map(item => (
-                  <span class="tech-chip border rounded-full px-2.5 py-0.5 text-xs font-mono cursor-default transition-all" style={chipStyle(item)}>
+                  <span class="tech-chip" style={chipStyle(item)}>
                     {item}
                   </span>
                 ))}
@@ -264,7 +264,7 @@ function chipStyle(tech: string): string {
                 </p>
                 <div class="flex flex-wrap gap-1">
                   {p.tags.map(tag => (
-                    <span class="tech-chip border rounded-full px-2 py-0.5 font-mono text-xs cursor-default transition-all" style={chipStyle(tag)}>
+                    <span class="tech-chip" style={chipStyle(tag)}>
                       {tag}
                     </span>
                   ))}
@@ -319,7 +319,7 @@ function chipStyle(tech: string): string {
               </p>
               <div class="flex flex-wrap gap-1.5">
                 {os.tags.map(tag => (
-                  <span class="tech-chip border rounded-full px-2 py-0.5 font-mono text-xs cursor-default transition-all" style={chipStyle(tag)}>
+                  <span class="tech-chip" style={chipStyle(tag)}>
                     {tag}
                   </span>
                 ))}
@@ -453,18 +453,6 @@ function chipStyle(tech: string): string {
 </Layout>
 
 <style>
-  /* 브랜드 컬러 칩 */
-  .tech-chip {
-    background: color-mix(in srgb, var(--chip-color, #6366F1) 10%, transparent);
-    color: var(--chip-color, #6366F1);
-    border-color: color-mix(in srgb, var(--chip-color, #6366F1) 30%, transparent);
-  }
-  .tech-chip:hover {
-    background: color-mix(in srgb, var(--chip-color, #6366F1) 20%, transparent);
-    border-color: var(--chip-color, #6366F1);
-    transform: translateY(-1px);
-  }
-
   /* 인쇄 최적화 */
   @media print {
     .print\:hidden { display: none !important; }
@@ -473,11 +461,11 @@ function chipStyle(tech: string): string {
     main { padding: 0 !important; max-width: 100% !important; }
     a { color: inherit !important; text-decoration: none !important; }
     .tech-chip {
-      border: 1px solid currentColor !important;
+      border: 1px solid var(--border) !important;
       background: transparent !important;
+      color: var(--foreground) !important;
     }
     .resume-header img { display: block !important; }
-    /* 섹션 중간에서 페이지 잘림 방지 */
     section { break-inside: avoid; }
     .relative.pl-4 { break-inside: avoid; }
     .rounded-xl { break-inside: avoid; }

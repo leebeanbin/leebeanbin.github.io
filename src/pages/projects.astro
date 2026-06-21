@@ -99,7 +99,7 @@ const others = staticProjects.filter(p =>
                 const color = TECH_COLORS[tag];
                 return (
                   <span
-                    class="tech-chip border rounded-full px-2.5 py-0.5 font-mono text-xs transition-all cursor-default"
+                    class="tech-chip"
                     style={color ? `--chip-color:${color}` : ""}
                   >
                     {tag}
@@ -133,7 +133,7 @@ const others = staticProjects.filter(p =>
                     const color = TECH_COLORS[tag];
                     return (
                       <span
-                        class="tech-chip border rounded px-2 py-0.5 font-mono text-xs transition-all"
+                        class="tech-chip"
                         style={color ? `--chip-color:${color}` : ""}
                       >
                         {tag}
@@ -155,14 +155,3 @@ const others = staticProjects.filter(p =>
   <Footer />
 </Layout>
 
-<style>
-  .tech-chip {
-    background: color-mix(in srgb, var(--chip-color, #6366F1) 10%, transparent);
-    color: var(--chip-color, #6366F1);
-    border-color: color-mix(in srgb, var(--chip-color, #6366F1) 30%, transparent);
-  }
-  .tech-chip:hover {
-    background: color-mix(in srgb, var(--chip-color, #6366F1) 18%, transparent);
-    border-color: var(--chip-color, #6366F1);
-  }
-</style>
