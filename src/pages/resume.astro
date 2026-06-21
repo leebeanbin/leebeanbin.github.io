@@ -4,7 +4,6 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import config from "@/config";
 import { resume } from "@/data/resume";
-import { TECH_COLORS } from "@/data/techColors";
 import { getBadgeUrl } from "@/utils/getBadgeUrl";
 
 const { name, title, photo, summary, summaryEn, contact, experience, education, skills, projects, openSource, certifications, awards } = resume;
@@ -16,11 +15,6 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Database & Infra": "#F59E0B",
   "Frontend":         "#06B6D4",
 };
-
-function chipStyle(tech: string): string {
-  const color = TECH_COLORS[tech];
-  return color ? `--chip-color:${color}` : "";
-}
 ---
 
 <Layout
@@ -197,11 +191,9 @@ function chipStyle(tech: string): string {
                 </ul>
               )}
 
-              <div class="flex flex-wrap gap-1.5">
+              <div class="flex flex-wrap gap-1.5 items-center">
                 {exp.tags.map(tag => (
-                  <span class="tech-chip" style={chipStyle(tag)}>
-                    {tag}
-                  </span>
+                  <img src={getBadgeUrl(tag)} alt={tag} height="20" class="h-5 rounded-sm" loading="lazy" decoding="async" />
                 ))}
               </div>
             </div>
@@ -268,11 +260,9 @@ function chipStyle(tech: string): string {
                     </>
                   ) : p.summary}
                 </p>
-                <div class="flex flex-wrap gap-1">
+                <div class="flex flex-wrap gap-1.5 items-center">
                   {p.tags.map(tag => (
-                    <span class="tech-chip" style={chipStyle(tag)}>
-                      {tag}
-                    </span>
+                    <img src={getBadgeUrl(tag)} alt={tag} height="20" class="h-5 rounded-sm" loading="lazy" decoding="async" />
                   ))}
                 </div>
               </div>
@@ -323,11 +313,9 @@ function chipStyle(tech: string): string {
                   </>
                 ) : os.description}
               </p>
-              <div class="flex flex-wrap gap-1.5">
+              <div class="flex flex-wrap gap-1.5 items-center">
                 {os.tags.map(tag => (
-                  <span class="tech-chip" style={chipStyle(tag)}>
-                    {tag}
-                  </span>
+                  <img src={getBadgeUrl(tag)} alt={tag} height="20" class="h-5 rounded-sm" loading="lazy" decoding="async" />
                 ))}
               </div>
             </div>
@@ -466,12 +454,9 @@ function chipStyle(tech: string): string {
     header, footer { display: none !important; }
     main { padding: 0 !important; max-width: 100% !important; }
     a { color: inherit !important; text-decoration: none !important; }
-    .tech-chip {
-      border: 1px solid var(--border) !important;
-      background: transparent !important;
-      color: var(--foreground) !important;
-    }
-    .resume-header img { display: block !important; }
+    /* 뱃지 이미지는 인쇄에서도 그대로 출력 */
+    img[alt] { max-height: 18px !important; }
+    .resume-header img { display: block !important; max-height: none !important; }
     section { break-inside: avoid; }
     .relative.pl-4 { break-inside: avoid; }
     .rounded-xl { break-inside: avoid; }
