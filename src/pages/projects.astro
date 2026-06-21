@@ -74,8 +74,16 @@ const others = staticProjects.filter(p =>
       </h2>
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {featured.map(p => (
-          <a href={p.url} target="_blank" rel="noopener noreferrer"
-             class="group flex flex-col border border-border rounded-xl p-5 gap-4 transition-colors duration-150 hover:border-accent/40"
+          <div
+            role="button"
+            tabindex="0"
+            class="proj-card group flex flex-col border border-border rounded-xl p-5 gap-4 cursor-pointer transition-colors duration-150 hover:border-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            data-name={p.name}
+            data-url={p.url}
+            data-desc={p.desc}
+            data-long-desc={p.longDesc ?? ""}
+            data-status={p.status ?? ""}
+            data-badges={JSON.stringify(p.tags.map(t => ({ tag: t, src: getBadgeUrl(t) })))}
           >
             <div class="flex items-start justify-between gap-3">
               <div>
@@ -86,20 +94,21 @@ const others = staticProjects.filter(p =>
                   </span>
                 )}
               </div>
+              <!-- 자세히 보기 힌트 아이콘 -->
               <svg class="size-4 shrink-0 mt-0.5 text-muted-foreground group-hover:text-accent transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"/>
               </svg>
             </div>
             <div class="flex-1">
               <p class="text-sm font-medium mb-1">{p.desc}</p>
-              {p.longDesc && <p class="text-xs text-muted-foreground leading-relaxed">{p.longDesc}</p>}
+              {p.longDesc && <p class="text-xs text-muted-foreground leading-relaxed line-clamp-2">{p.longDesc}</p>}
             </div>
             <div class="flex flex-wrap gap-1.5 items-center">
               {p.tags.map(tag => (
                 <img src={getBadgeUrl(tag)} alt={tag} height="20" class="h-5 rounded-sm" loading="lazy" decoding="async" />
               ))}
             </div>
-          </a>
+          </div>
         ))}
       </div>
     </section>
@@ -137,5 +146,181 @@ const others = staticProjects.filter(p =>
 
   </main>
   <Footer />
+
+  <!-- ── Project Detail Modal ──────────────────────────────────────────────── -->
+  <div
+    id="proj-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="proj-modal-name"
+    aria-hidden="true"
+    class="fixed inset-0 z-50 hidden"
+  >
+    <!-- Backdrop -->
+    <div id="proj-modal-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-200"></div>
+
+    <!-- Panel -->
+    <div class="relative flex min-h-full items-center justify-center p-4">
+      <div
+        id="proj-modal-panel"
+        class="relative w-full max-w-lg rounded-2xl border border-border bg-background shadow-2xl translate-y-4 opacity-0 transition-all duration-200"
+      >
+        <!-- Close button -->
+        <button
+          id="proj-modal-close"
+          aria-label="닫기"
+          class="absolute right-4 top-4 flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+
+        <!-- Content -->
+        <div class="p-6 pt-5">
+          <!-- Header -->
+          <div class="mb-4 pr-10">
+            <div class="flex items-center gap-2 mb-1">
+              <h2 id="proj-modal-name" class="font-mono font-bold text-xl"></h2>
+              <span id="proj-modal-status" class="hidden items-center gap-1 text-xs text-green-500">
+                <span class="inline-block size-1.5 rounded-full bg-green-500 animate-pulse"></span>active
+              </span>
+            </div>
+            <p id="proj-modal-desc" class="text-sm text-muted-foreground"></p>
+          </div>
+
+          <!-- Long description -->
+          <p id="proj-modal-long-desc" class="text-sm leading-relaxed mb-5 hidden"></p>
+
+          <!-- Tech stack badges -->
+          <div id="proj-modal-tags" class="flex flex-wrap gap-1.5 mb-6"></div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-3 pt-4 border-t border-border">
+            <a
+              id="proj-modal-link"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-primary text-sm gap-1.5"
+            >
+              <svg class="size-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+              GitHub에서 보기
+            </a>
+            <button
+              id="proj-modal-cancel"
+              class="btn-secondary text-sm"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </Layout>
 
+<script>
+  function initProjectModal() {
+    const modal = document.getElementById("proj-modal");
+    const backdrop = document.getElementById("proj-modal-backdrop");
+    const panel = document.getElementById("proj-modal-panel");
+    const closeBtn = document.getElementById("proj-modal-close");
+    const cancelBtn = document.getElementById("proj-modal-cancel");
+    const nameEl = document.getElementById("proj-modal-name");
+    const statusEl = document.getElementById("proj-modal-status");
+    const descEl = document.getElementById("proj-modal-desc");
+    const longDescEl = document.getElementById("proj-modal-long-desc");
+    const tagsEl = document.getElementById("proj-modal-tags");
+    const linkEl = document.getElementById("proj-modal-link") as HTMLAnchorElement | null;
+
+    if (!modal || !backdrop || !panel) return;
+
+    let lastFocused: HTMLElement | null = null;
+
+    function openModal(card: HTMLElement) {
+      const name = card.dataset.name ?? "";
+      const url = card.dataset.url ?? "#";
+      const desc = card.dataset.desc ?? "";
+      const longDesc = card.dataset.longDesc ?? "";
+      const status = card.dataset.status ?? "";
+      const badges: { tag: string; src: string }[] = JSON.parse(card.dataset.badges ?? "[]");
+
+      if (nameEl) nameEl.textContent = name;
+      if (descEl) descEl.textContent = desc;
+      if (statusEl) {
+        statusEl.classList.toggle("hidden", status !== "active");
+        statusEl.classList.toggle("inline-flex", status === "active");
+      }
+      if (longDescEl) {
+        longDescEl.textContent = longDesc;
+        longDescEl.classList.toggle("hidden", !longDesc);
+      }
+      if (tagsEl) {
+        tagsEl.innerHTML = "";
+        badges.forEach(({ tag, src }) => {
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = tag;
+          img.height = 20;
+          img.className = "h-5 rounded-sm";
+          img.loading = "lazy";
+          tagsEl.appendChild(img);
+        });
+      }
+      if (linkEl) linkEl.href = url;
+
+      lastFocused = document.activeElement as HTMLElement;
+      modal!.classList.remove("hidden");
+      modal!.removeAttribute("aria-hidden");
+      document.body.style.overflow = "hidden";
+
+      requestAnimationFrame(() => {
+        backdrop!.style.opacity = "1";
+        panel!.style.opacity = "1";
+        panel!.style.transform = "translateY(0)";
+        closeBtn?.focus();
+      });
+    }
+
+    function closeModal() {
+      backdrop!.style.opacity = "0";
+      panel!.style.opacity = "0";
+      panel!.style.transform = "translateY(4px)";
+      document.body.style.overflow = "";
+
+      setTimeout(() => {
+        modal!.classList.add("hidden");
+        modal!.setAttribute("aria-hidden", "true");
+        lastFocused?.focus();
+      }, 200);
+    }
+
+    // Card click / keyboard
+    document.querySelectorAll<HTMLElement>(".proj-card").forEach(card => {
+      card.addEventListener("click", () => openModal(card));
+      card.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openModal(card);
+        }
+      });
+    });
+
+    // Close triggers
+    closeBtn?.addEventListener("click", closeModal);
+    cancelBtn?.addEventListener("click", closeModal);
+    backdrop.addEventListener("click", closeModal);
+
+    // ESC key
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && !modal.classList.contains("hidden")) closeModal();
+    });
+
+  }
+
+  initProjectModal();
+  document.addEventListener("astro:after-swap", initProjectModal);
+</script>

@@ -5,16 +5,9 @@ import Footer from "@/components/Footer.astro";
 import config from "@/config";
 import { siteContent } from "@/data/site";
 import { resume } from "@/data/resume";
-import { getBadgeUrl } from "@/utils/getBadgeUrl";
-
+import GitHubChart from "@/components/GitHubChart.astro";
 const { about, hero } = siteContent;
-const { name, contact, experience } = resume;
-
-const skillGroups = siteContent.about.skillGroups;
-
-function expAnchor(company: string) {
-  return "exp-" + company.toLowerCase().replace(/[^a-z0-9가-힣]+/g, "-").replace(/^-|-$/g, "");
-}
+const { name, contact } = resume;
 ---
 
 <Layout
@@ -24,276 +17,100 @@ function expAnchor(company: string) {
   <Header />
   <main id="main-content" class="app-layout py-12 sm:py-16">
 
-    <!-- 헤더 -->
+    <!-- 헤더 — 이름 + 아이콘 링크 -->
     <div class="border-b border-border pb-10 mb-10 animate-fade-in-up">
-      <p class="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">About</p>
-      <div class="flex flex-wrap items-baseline gap-3 mb-1">
-        <h1 class="font-bold" style="font-size: var(--text-fluid-3xl)">
-          <span class="lang-ko">{name.ko}</span>
-          <span class="lang-en">{name.en}</span>
-        </h1>
-        <span class="text-muted-foreground font-light" style="font-size: var(--text-fluid-xl)">
-          <span class="lang-ko">{name.en}</span>
-          <span class="lang-en">{name.ko}</span>
-        </span>
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">About</p>
+          <div class="flex flex-wrap items-baseline gap-3 mb-1">
+            <h1 class="font-bold" style="font-size: var(--text-fluid-3xl)">
+              <span class="lang-ko">{name.ko}</span>
+              <span class="lang-en">{name.en}</span>
+            </h1>
+            <span class="text-muted-foreground font-light" style="font-size: var(--text-fluid-xl)">
+              <span class="lang-ko">{name.en}</span>
+              <span class="lang-en">{name.ko}</span>
+            </span>
+          </div>
+          <p class="text-accent font-mono text-sm mt-1">{hero.role}</p>
+        </div>
+
+        <!-- 빠른 링크 아이콘 그룹 -->
+        <div class="flex items-center gap-1 mt-1 shrink-0">
+          <!-- 이력서 -->
+          <a href="/resume" title="이력서 / Resume"
+             class="btn-ghost size-9 rounded-lg" aria-label="이력서">
+            <svg class="size-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+            </svg>
+          </a>
+          <!-- 이메일 -->
+          <a href={`mailto:${contact.email}`} title={contact.email}
+             class="btn-ghost size-9 rounded-lg" aria-label="이메일">
+            <svg class="size-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+            </svg>
+          </a>
+          <!-- GitHub -->
+          <a href={contact.github} target="_blank" rel="noopener" title="GitHub"
+             class="btn-ghost size-9 rounded-lg" aria-label="GitHub">
+            <svg class="size-[18px]" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+          </a>
+          {contact.linkedin && (
+            <a href={contact.linkedin} target="_blank" rel="noopener" title="LinkedIn"
+               class="btn-ghost size-9 rounded-lg" aria-label="LinkedIn">
+              <svg class="size-[18px]" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </a>
+          )}
+        </div>
       </div>
-      <p class="text-accent font-mono text-sm mt-1">{hero.role}</p>
     </div>
 
-    <!-- GitHub 통계 카드 -->
-    <section class="mb-10 reveal">
-      <div class="grid grid-cols-3 gap-3 sm:gap-4">
-        <div class="stat-card border border-border rounded-xl p-4 text-center hover:border-accent transition-colors">
-          <p class="text-2xl font-bold text-accent">3+</p>
-          <p class="text-xs text-muted-foreground mt-1 font-mono">
-            <span class="lang-ko">경력 회사</span>
-            <span class="lang-en">Companies</span>
-          </p>
-        </div>
-        <div class="stat-card border border-border rounded-xl p-4 text-center hover:border-accent transition-colors">
-          <p class="text-2xl font-bold text-accent">10+</p>
-          <p class="text-xs text-muted-foreground mt-1 font-mono">
-            <span class="lang-ko">공개 레포</span>
-            <span class="lang-en">Public Repos</span>
-          </p>
-        </div>
-        <div class="stat-card border border-border rounded-xl p-4 text-center hover:border-accent transition-colors">
-          <p class="text-2xl font-bold text-accent">2+</p>
-          <p class="text-xs text-muted-foreground mt-1 font-mono">
-            <span class="lang-ko">오픈소스</span>
-            <span class="lang-en">OSS Projects</span>
-          </p>
-        </div>
+    <!-- 통계 -->
+    <div class="grid grid-cols-3 gap-3 sm:gap-4 mb-12 reveal">
+      <div class="stat-card border border-border rounded-xl p-4 text-center hover:border-accent transition-colors">
+        <p class="text-2xl font-bold text-accent">3+</p>
+        <p class="text-xs text-muted-foreground mt-1 font-mono">
+          <span class="lang-ko">경력 회사</span>
+          <span class="lang-en">Companies</span>
+        </p>
       </div>
-    </section>
+      <div class="stat-card border border-border rounded-xl p-4 text-center hover:border-accent transition-colors">
+        <p class="text-2xl font-bold text-accent">10+</p>
+        <p class="text-xs text-muted-foreground mt-1 font-mono">
+          <span class="lang-ko">공개 레포</span>
+          <span class="lang-en">Public Repos</span>
+        </p>
+      </div>
+      <div class="stat-card border border-border rounded-xl p-4 text-center hover:border-accent transition-colors">
+        <p class="text-2xl font-bold text-accent">2+</p>
+        <p class="text-xs text-muted-foreground mt-1 font-mono">
+          <span class="lang-ko">오픈소스</span>
+          <span class="lang-en">OSS</span>
+        </p>
+      </div>
+    </div>
 
     <!-- 소개 문단 -->
-    <section class="mb-12 max-w-2xl space-y-4">
+    <div class="mb-14 max-w-2xl space-y-4 reveal reveal-delay-1">
       {about.ko.map((p, i) => (
         <>
           <p class="lang-ko text-base leading-relaxed text-muted-foreground">{p}</p>
           <p class="lang-en text-base leading-relaxed text-muted-foreground">{about.en[i]}</p>
         </>
       ))}
-    </section>
+    </div>
 
     <!-- GitHub 잔디 -->
-    <section class="mb-12 reveal reveal-delay-1">
-      <h2 class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
-        <span class="inline-block size-1.5 rounded-full bg-accent"></span>
-        <span class="lang-ko">GitHub 기여</span>
-        <span class="lang-en">GitHub Contributions</span>
-      </h2>
-      <div class="overflow-x-auto rounded-xl border border-border p-4 bg-muted/30 min-h-28">
-        <img
-          src="https://ghchart.rshah.org/2563eb/leebeanbin"
-          alt="GitHub contribution graph"
-          class="w-full block dark:hidden"
-          loading="eager"
-          onerror="this.style.display='none'; document.getElementById('gh-chart-fallback')?.classList.remove('hidden')"
-        />
-        <img
-          src="https://ghchart.rshah.org/60a5fa/leebeanbin"
-          alt="GitHub contribution graph"
-          class="w-full hidden dark:block"
-          loading="eager"
-          onerror="this.style.display='none'; document.getElementById('gh-chart-fallback')?.classList.remove('hidden')"
-        />
-        <p id="gh-chart-fallback" class="hidden text-xs text-muted-foreground text-center py-4">
-          GitHub contribution chart unavailable —
-          <a href={contact.github} target="_blank" rel="noopener" class="text-accent hover:underline">
-            view on GitHub
-          </a>
-        </p>
-      </div>
-      <a href={contact.github} target="_blank" rel="noopener"
-         class="inline-flex items-center gap-1 mt-2 text-xs text-muted-foreground hover:text-accent transition-colors">
-        <svg class="size-3" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-        </svg>
-        github.com/leebeanbin
-      </a>
-    </section>
-
-    <!-- 경력 타임라인 -->
-    <section class="mb-12 reveal reveal-delay-2">
-      <h2 class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6">
-        <span class="inline-block size-1.5 rounded-full bg-muted-foreground"></span>
-        <span class="lang-ko">경력</span>
-        <span class="lang-en">Experience</span>
-      </h2>
-
-      <div class="relative">
-        <!-- 수직 연결선 -->
-        <div class="absolute left-[5px] top-2 bottom-6 w-px bg-border" aria-hidden="true"></div>
-
-        <ul class="space-y-0">
-          {experience.map((exp, i) => {
-            const anchor = expAnchor(exp.company);
-            const hasBullets = exp.bullets.some(b => !b.includes("입력해주세요") && !b.includes("Please fill"));
-            return (
-              <li class="exp-item group relative pl-6 pb-7 last:pb-0">
-                <!-- 타임라인 닷 -->
-                <div class="absolute left-0 top-[7px] size-[11px] rounded-full border-2 border-border bg-background group-hover:border-accent group-hover:bg-accent/10 transition-all duration-150" aria-hidden="true"></div>
-
-                <!-- 헤더 행 -->
-                <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 cursor-default">
-                  <div class="flex items-baseline gap-2 flex-wrap">
-                    <a
-                      href={`/resume#${anchor}`}
-                      class="font-semibold text-sm text-foreground hover:text-accent transition-colors"
-                    >
-                      {exp.company}
-                    </a>
-                    <span class="text-xs font-mono text-accent">
-                      {exp.roleEn ? (
-                        <>
-                          <span class="lang-ko">{exp.role}</span>
-                          <span class="lang-en">{exp.roleEn}</span>
-                        </>
-                      ) : exp.role}
-                    </span>
-                  </div>
-                  <span class="text-xs font-mono text-muted-foreground/70 shrink-0">{exp.period}</span>
-                </div>
-
-                <!-- 툴팁: hover 시 표시 (데스크탑), 모바일은 항상 인라인 -->
-                {hasBullets && (
-                  <>
-                    {/* 데스크탑: 호버 툴팁 */}
-                    <div class="exp-tooltip pointer-events-none hidden sm:block
-                                absolute left-5 top-8 z-50 w-80
-                                rounded-xl border border-border bg-background
-                                shadow-[0_8px_30px_rgba(0,0,0,0.10)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)]
-                                p-4 opacity-0 translate-y-1
-                                transition-all duration-150"
-                         aria-hidden="true">
-                      <p class="text-xs font-semibold text-foreground mb-2">
-                        {exp.company} · <span class="text-accent">{exp.roleEn ?? exp.role}</span>
-                      </p>
-                      <ul class="space-y-1.5 mb-3">
-                        {(exp.bulletsEn ?? exp.bullets).slice(0, 4).map(b => (
-                          <li class="text-xs text-muted-foreground flex gap-2">
-                            <span class="text-accent shrink-0">▸</span>
-                            <span>{b}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <div class="flex flex-wrap gap-1 mb-3">
-                        {exp.tags.slice(0, 5).map(tag => (
-                          <img src={getBadgeUrl(tag)} alt={tag} height="18" class="h-[18px] rounded-sm" loading="lazy" decoding="async" />
-                        ))}
-                      </div>
-                      <a href={`/resume#${anchor}`}
-                         class="pointer-events-auto text-xs text-accent hover:underline font-mono">
-                        이력서에서 전체 보기 →
-                      </a>
-                    </div>
-
-                    {/* 모바일: 인라인 축약 불릿 */}
-                    <ul class="sm:hidden mt-1.5 space-y-1">
-                      {(exp.bulletsEn ?? exp.bullets).slice(0, 2).map(b => (
-                        <li class="text-xs text-muted-foreground flex gap-1.5">
-                          <span class="text-accent shrink-0">▸</span>
-                          <span class="line-clamp-1">{b}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-
-      <a href="/resume" class="inline-flex items-center gap-1 mt-2 text-xs text-muted-foreground hover:text-accent transition-colors font-mono">
-        <span class="lang-ko">전체 이력서 보기</span>
-        <span class="lang-en">Full resume</span>
-        →
-      </a>
-    </section>
-
-    <!-- 기술 스택 — 카테고리 테이블 그리드 -->
-    <section class="mb-12 reveal reveal-delay-3">
-      <h2 class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6">
-        <span class="inline-block size-1.5 rounded-full bg-muted-foreground"></span>
-        <span class="lang-ko">주요 기술</span>
-        <span class="lang-en">Tech Stack</span>
-      </h2>
-      <div class="divide-y divide-border border border-border rounded-xl overflow-hidden">
-        {skillGroups.map(group => (
-          <div class="flex flex-col sm:flex-row sm:items-start gap-3 px-4 py-3.5">
-            <span class="w-24 shrink-0 text-xs font-mono text-muted-foreground/60 uppercase tracking-widest pt-0.5">
-              {group.label}
-            </span>
-            <div class="flex flex-wrap gap-1.5 items-center">
-              {group.items.map(tech => (
-                <img
-                  src={getBadgeUrl(tech)}
-                  alt={tech}
-                  height="20"
-                  class="h-5 rounded-sm"
-                  loading="lazy"
-                  decoding="async"
-                />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-      <p class="mt-5 text-xs text-muted-foreground">
-        <span class="lang-ko">상세 기술 스택과 경력은</span>
-        <span class="lang-en">Full skill breakdown and work history on</span>
-        <a href="/resume" class="text-accent hover:underline ml-1">
-          <span class="lang-ko">이력서 페이지</span>
-          <span class="lang-en">Resume</span>
-        </a>
-        <span class="lang-ko">에서 확인할 수 있습니다.</span>
-        <span class="lang-en">.</span>
-      </p>
-    </section>
-
-    <!-- 연락처 -->
-    <section class="reveal reveal-delay-3">
-      <h2 class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
-        <span class="inline-block size-1.5 rounded-full bg-muted-foreground"></span>
-        Contact
-      </h2>
-      <div class="flex flex-wrap gap-3">
-        <a href={`mailto:${contact.email}`}
-           class="btn-secondary gap-2 px-4 py-2 text-sm">
-          <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-          </svg>
-          {contact.email}
-        </a>
-        <a href={contact.github} target="_blank" rel="noopener"
-           class="btn-secondary gap-2 px-4 py-2 text-sm">
-          <svg class="size-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-          </svg>
-          GitHub
-        </a>
-        {contact.linkedin && (
-          <a href={contact.linkedin} target="_blank" rel="noopener"
-             class="btn-secondary gap-2 px-4 py-2 text-sm">
-            <svg class="size-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-            LinkedIn
-          </a>
-        )}
-        <a href="/resume"
-           class="btn-secondary gap-2 px-4 py-2 text-sm">
-          <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          <span class="lang-ko">이력서</span>
-          <span class="lang-en">Resume</span>
-        </a>
-      </div>
-    </section>
+    <div class="mb-14 reveal reveal-delay-2 overflow-x-auto rounded-xl border border-border p-4 bg-muted/30">
+      <GitHubChart />
+    </div>
 
   </main>
   <Footer />
@@ -310,52 +127,8 @@ function expAnchor(company: string) {
   "sameAs": [contact.github, contact.linkedin].filter(Boolean),
 })} />
 
-<script>
-  function initExpTooltips() {
-    document.querySelectorAll<HTMLElement>(".exp-item").forEach(item => {
-      const tooltip = item.querySelector<HTMLElement>(".exp-tooltip");
-      if (!tooltip) return;
-
-      let timer: ReturnType<typeof setTimeout>;
-
-      const show = () => {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          tooltip.classList.add("pointer-events-auto");
-          requestAnimationFrame(() => {
-            tooltip.style.opacity = "1";
-            tooltip.style.transform = "translateY(0)";
-          });
-        }, 180);
-      };
-
-      const hide = () => {
-        clearTimeout(timer);
-        tooltip.style.opacity = "0";
-        tooltip.style.transform = "translateY(4px)";
-        setTimeout(() => tooltip.classList.remove("pointer-events-auto"), 150);
-      };
-
-      item.addEventListener("mouseenter", show);
-      item.addEventListener("mouseleave", hide);
-    });
-  }
-
-  initExpTooltips();
-  document.addEventListener("astro:after-swap", initExpTooltips);
-</script>
-
 <style>
   .stat-card {
     background: var(--background);
   }
-
-  .exp-tooltip {
-    transform: translateY(4px);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .exp-tooltip { transition: none; }
-  }
 </style>
-

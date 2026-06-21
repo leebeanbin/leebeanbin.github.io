@@ -34,6 +34,8 @@ const BADGE_LOGOS: Record<string, string> = {
   OpenAI:             "openai",
   Anthropic:          "anthropic",
   "Anthropic Claude": "anthropic",
+  LangChain:          "langchain",
+  Ollama:             "ollama",
   HuggingFace:        "huggingface",
   PyTorch:            "pytorch",
   TensorFlow:         "tensorflow",
@@ -80,6 +82,8 @@ const BADGE_LOGOS: Record<string, string> = {
   Discord:       "discord",
   Notion:        "notion",
   PWA:           "pwa",
+  gRPC:          "grpc",
+  "Kakao Maps":  "kakao",
 };
 
 /**

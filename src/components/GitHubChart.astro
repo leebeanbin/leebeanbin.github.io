@@ -1,0 +1,275 @@
+---
+import { getGithubContributions } from "@/utils/getGithubContributions";
+import { resume } from "@/data/resume";
+
+const contributions = await getGithubContributions();
+const githubUrl = resume.contact.github;
+
+// layout constants — 셀 크기를 키워서 차트를 더 크게 렌더링
+const CELL = 13;        // px (기존 11 → 13)
+const GAP  = 3;         // px
+const S    = CELL + GAP; // 16px per step
+const DAY_W  = 24;      // day-of-week label column width
+const MONTH_Y = 13;     // month label baseline
+const GRID_Y  = 22;     // start of day grid
+
+// Sun=0 … Sat=6
+const DOW_LABELS: Record<number, string> = { 1: "Mon", 3: "Wed", 5: "Fri" };
+
+function level(n: number): 0 | 1 | 2 | 3 | 4 {
+  if (n === 0) return 0;
+  if (n <= 3)  return 1;
+  if (n <= 6)  return 2;
+  if (n <= 9)  return 3;
+  return 4;
+}
+
+const MON = ["Jan","Feb","Mar","Apr","May","Jun",
+             "Jul","Aug","Sep","Oct","Nov","Dec"];
+
+type Cell = { x:number; y:number; lv:number; date:string; count:number };
+type MLbl = { x:number; label:string };
+
+let svgW = 0;
+const svgH = GRID_Y + 7 * S - GAP;
+const cells: Cell[] = [];
+const mlbls: MLbl[] = [];
+
+if (contributions) {
+  svgW = DAY_W + contributions.weeks.length * S - GAP;
+
+  let lastM = -1;
+  contributions.weeks.forEach((week, wi) => {
+    const first = week.contributionDays[0];
+    if (first) {
+      const m = new Date(first.date + "T12:00:00Z").getMonth();
+      if (m !== lastM) {
+        if (wi > 0) mlbls.push({ x: DAY_W + wi * S, label: MON[m] });
+        lastM = m;
+      }
+    }
+    week.contributionDays.forEach(day => {
+      const dow = new Date(day.date + "T12:00:00Z").getDay();
+      cells.push({
+        x:     DAY_W + wi * S,
+        y:     GRID_Y + dow * S,
+        lv:    level(day.contributionCount),
+        date:  day.date,
+        count: day.contributionCount,
+      });
+    });
+  });
+}
+---
+
+{contributions ? (
+  <div class="gh-root">
+    <p class="gh-total">
+      {contributions.totalContributions.toLocaleString()}
+      <span class="lang-ko"> contributions (최근 1년)</span>
+      <span class="lang-en"> contributions in the last year</span>
+    </p>
+
+    <!-- tooltip은 JS에서 body에 동적 생성 (transform stacking context 회피) -->
+
+    <div class="gh-scroll">
+      <svg
+        id="gh-svg"
+        viewBox={`0 0 ${svgW} ${svgH}`}
+        width="100%"
+        style="height: auto; display: block;"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="GitHub contribution chart"
+        role="img"
+      >
+        <!-- day-of-week labels -->
+        {Object.entries(DOW_LABELS).map(([dow, label]) => (
+          <text
+            x={DAY_W - 4}
+            y={GRID_Y + Number(dow) * S + CELL - 1}
+            class="gh-day-text"
+            font-size="9"
+            font-family="monospace"
+            text-anchor="end"
+          >{label}</text>
+        ))}
+
+        <!-- month labels -->
+        {mlbls.map(({ x, label }) => (
+          <text
+            x={x} y={MONTH_Y}
+            class="gh-month-text"
+            font-size="10"
+            font-family="monospace"
+          >{label}</text>
+        ))}
+
+        <!-- day cells -->
+        {cells.map(c => (
+          <rect
+            x={c.x} y={c.y}
+            width={CELL} height={CELL}
+            rx={2} ry={2}
+            class={`gh-cell gh-lv${c.lv}`}
+            data-date={c.date}
+            data-count={String(c.count)}
+          />
+        ))}
+      </svg>
+    </div>
+
+    <a href={githubUrl} target="_blank" rel="noopener"
+       class="gh-link">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+      github.com/leebeanbin
+    </a>
+  </div>
+) : (
+  <div>
+    <div class="gh-fallback">
+      <img src="https://ghchart.rshah.org/2563eb/leebeanbin"
+           alt="GitHub contribution graph"
+           class="block dark:hidden w-full" loading="eager" />
+      <img src="https://ghchart.rshah.org/60a5fa/leebeanbin"
+           alt="GitHub contribution graph"
+           class="hidden dark:block w-full" loading="eager" />
+    </div>
+    <a href={githubUrl} target="_blank" rel="noopener" class="gh-link">
+      github.com/leebeanbin
+    </a>
+  </div>
+)}
+
+<style is:global>
+  .gh-root   { width: 100%; }
+  .gh-total  {
+    font-size: .7rem;
+    color: var(--muted-foreground);
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .gh-scroll {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .gh-scroll::-webkit-scrollbar { display: none; }
+
+  .gh-day-text {
+    fill: var(--muted-foreground);
+    user-select: none;
+    opacity: 0.7;
+  }
+  .gh-month-text {
+    fill: var(--muted-foreground);
+    user-select: none;
+  }
+  .gh-cell  { cursor: default; transition: opacity 80ms; }
+  .gh-cell:hover { opacity: .65; }
+
+  /* lv0: 빈 날짜가 보이도록 배경과 구분되는 색상 사용 */
+  .gh-lv0 { fill: color-mix(in srgb, var(--muted-foreground) 12%, var(--muted)); stroke: color-mix(in srgb, var(--muted-foreground) 18%, var(--muted)); stroke-width: .5; }
+  .gh-lv1 { fill: color-mix(in srgb, var(--accent) 25%, var(--muted)); }
+  .gh-lv2 { fill: color-mix(in srgb, var(--accent) 50%, var(--muted)); }
+  .gh-lv3 { fill: color-mix(in srgb, var(--accent) 75%, var(--muted)); }
+  .gh-lv4 { fill: var(--accent); }
+
+  /* tooltip — body에 주입, 전역 스타일 필요 */
+  #gh-tip {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    display: none;
+    padding: 4px 9px;
+    border-radius: 6px;
+    font-size: .68rem;
+    font-family: monospace;
+    white-space: nowrap;
+    background: var(--foreground);
+    color: var(--background);
+    transform: translate(-50%, calc(-100% - 10px));
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  }
+  #gh-tip::after {
+    content: "";
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: var(--foreground);
+  }
+
+  .gh-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    font-size: .72rem;
+    color: var(--muted-foreground);
+    transition: color 150ms;
+    text-decoration: none;
+  }
+  .gh-link:hover { color: var(--accent); }
+
+  .gh-fallback {
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+    padding: 1rem;
+    background: color-mix(in srgb, var(--muted) 30%, transparent);
+    min-height: 7rem;
+  }
+</style>
+
+<script>
+  function initGhChart() {
+    const svg = document.getElementById("gh-svg");
+    if (!svg) return;
+
+    // tooltip을 body에 생성/재활용 (transform stacking context 문제 회피)
+    let tip = document.getElementById("gh-tip");
+    if (!tip) {
+      tip = document.createElement("div");
+      tip.id = "gh-tip";
+      tip.setAttribute("role", "tooltip");
+      tip.setAttribute("aria-hidden", "true");
+      document.body.appendChild(tip);
+    }
+
+    const MONTHS = [
+      "January","February","March","April","May","June",
+      "July","August","September","October","November","December",
+    ];
+
+    function fmt(iso: string) {
+      const [y, m, d] = iso.split("-").map(Number);
+      return `${MONTHS[m - 1]} ${d}, ${y}`;
+    }
+
+    // 기존 리스너 중복 등록 방지
+    const oldSvg = svg.cloneNode(true) as SVGElement;
+    svg.parentNode!.replaceChild(oldSvg, svg);
+    const liveSvg = document.getElementById("gh-svg")!;
+
+    liveSvg.addEventListener("mousemove", e => {
+      const el = (e.target as SVGElement).closest<SVGElement>(".gh-cell");
+      if (!el) { tip!.style.display = "none"; return; }
+
+      const count = Number(el.dataset.count ?? 0);
+      const label = count === 0
+        ? "No contributions"
+        : `${count} contribution${count === 1 ? "" : "s"}`;
+      tip!.textContent = `${label} · ${fmt(el.dataset.date!)}`;
+      tip!.style.display = "block";
+      tip!.style.left = `${e.clientX}px`;
+      tip!.style.top  = `${e.clientY}px`;
+    });
+
+    liveSvg.addEventListener("mouseleave", () => {
+      if (tip) tip.style.display = "none";
+    });
+  }
+
+  initGhChart();
+  document.addEventListener("astro:after-swap", initGhChart);
+</script>

@@ -50,30 +50,33 @@ const hasCategories = groupedPosts.some(g => g.category !== null);
       </p>
     </div>
 
-    <!-- 태그 필터 칩 -->
+    <!-- 태그 필터 탭 (슬라이딩 pill) -->
     {uniqueTags.length > 0 && (
-      <div class="mb-8 flex flex-wrap gap-2 items-center">
-        <span class="text-xs font-mono text-muted-foreground mr-1 shrink-0">
-          <span class="lang-ko">필터:</span>
-          <span class="lang-en">Filter:</span>
-        </span>
-        <button
-          class="tag-filter-btn active-filter"
-          data-tag="__all__"
-        >
-          <span class="lang-ko">전체</span>
-          <span class="lang-en">All</span>
-          <span class="count">({sortedPosts.length})</span>
-        </button>
-        {uniqueTags.map(({ tag, tagName }) => {
-          const count = sortedPosts.filter(p => p.data.tags?.includes(tag)).length;
-          return (
-            <button class="tag-filter-btn" data-tag={tag}>
-              #{tagName}
-              <span class="count">({count})</span>
-            </button>
-          );
-        })}
+      <div class="mb-8">
+        <div class="tag-filter-row" role="tablist">
+          <!-- 슬라이딩 pill indicator -->
+          <div id="tag-indicator" aria-hidden="true"></div>
+
+          <button
+            class="tag-filter-btn active-filter"
+            data-tag="__all__"
+            role="tab"
+            aria-selected="true"
+          >
+            <span class="lang-ko">전체</span>
+            <span class="lang-en">All</span>
+            <span class="count">{sortedPosts.length}</span>
+          </button>
+          {uniqueTags.map(({ tag, tagName }) => {
+            const count = sortedPosts.filter(p => p.data.tags?.includes(tag)).length;
+            return (
+              <button class="tag-filter-btn" data-tag={tag} role="tab" aria-selected="false">
+                #{tagName}
+                <span class="count">{count}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     )}
 
@@ -133,102 +136,161 @@ const hasCategories = groupedPosts.some(g => g.category !== null);
 </Layout>
 
 <style>
+  /* ── 탭 필터 바 ─────────────────────────────────────────────────────────── */
+  .tag-filter-row {
+    position: relative;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+    padding: 3px;               /* pill이 잘리지 않도록 여백 */
+    margin: -3px;
+  }
+  .tag-filter-row::-webkit-scrollbar { display: none; }
+
+  /* 슬라이딩 pill */
+  #tag-indicator {
+    position: absolute;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--accent) 10%, var(--background));
+    border: 1.5px solid var(--accent);
+    pointer-events: none;
+    opacity: 0;
+    transition:
+      left   220ms cubic-bezier(0.4, 0, 0.2, 1),
+      top    220ms cubic-bezier(0.4, 0, 0.2, 1),
+      width  220ms cubic-bezier(0.4, 0, 0.2, 1),
+      height 220ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 80ms ease;
+    z-index: 0;
+  }
+
   .tag-filter-btn {
+    position: relative;
+    z-index: 1;
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    border: 1px solid var(--border);
+    gap: 0.3rem;
     border-radius: 9999px;
-    padding: 0.25rem 0.75rem;
+    padding: 0.25rem 0.8rem;
     font-size: 0.75rem;
     font-family: var(--font-mono);
     color: var(--muted-foreground);
     background: transparent;
+    border: none;
     cursor: pointer;
-    transition: border-color 150ms ease, color 150ms ease, background-color 150ms ease, transform 100ms ease;
+    white-space: nowrap;
+    transition: color 150ms ease;
     user-select: none;
+    flex-shrink: 0;
   }
-  .tag-filter-btn:hover {
-    border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
-    color: var(--accent);
-  }
-  .tag-filter-btn:active {
-    transform: scale(0.96);
-  }
+  .tag-filter-btn:hover { color: var(--foreground); }
   .tag-filter-btn.active-filter {
-    border-color: var(--accent);
     color: var(--accent);
     font-weight: 500;
   }
   .tag-filter-btn .count {
+    font-size: 0.65rem;
     color: var(--muted-foreground);
-    opacity: 0.7;
+    opacity: 0.6;
   }
   .tag-filter-btn.active-filter .count {
     color: var(--accent);
-    opacity: 0.7;
+    opacity: 0.6;
   }
 
-  /* 카드 필터 애니메이션 */
-  #posts-list {
-    transition: opacity 120ms ease;
+  /* ── 카드 stagger 애니메이션 ─────────────────────────────────────────────── */
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .post-card.animating-in {
+    animation: card-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--stagger, 0) * 35ms);
   }
 </style>
 
 <script>
   function initTagFilter() {
-    const btns = document.querySelectorAll<HTMLButtonElement>(".tag-filter-btn");
-    const cards = document.querySelectorAll<HTMLElement>(".post-card");
+    const btns      = document.querySelectorAll<HTMLButtonElement>(".tag-filter-btn");
+    const cards     = document.querySelectorAll<HTMLElement>(".post-card");
     const noResults = document.querySelector<HTMLElement>("#no-results");
+    const indicator = document.getElementById("tag-indicator");
+    const row       = document.querySelector<HTMLElement>(".tag-filter-row");
 
-    const params = new URLSearchParams(window.location.search);
+    if (!btns.length) return;
+
+    const params     = new URLSearchParams(window.location.search);
     const initialTag = params.get("tag") ?? "__all__";
 
-    function applyFilter(tag: string, pushHistory = true) {
-      // 버튼 active 상태
+    // ── pill indicator 이동 ───────────────────────────────────────────────
+    function movePill(btn: HTMLButtonElement, animate = true) {
+      if (!indicator || !row) return;
+      if (!animate) indicator.style.transition = "none";
+
+      const bRect = btn.getBoundingClientRect();
+      const rRect = row.getBoundingClientRect();
+      indicator.style.left   = `${bRect.left - rRect.left + row.scrollLeft}px`;
+      indicator.style.top    = `${bRect.top  - rRect.top  + row.scrollTop}px`;
+      indicator.style.width  = `${bRect.width}px`;
+      indicator.style.height = `${bRect.height}px`;
+      indicator.style.opacity = "1";
+
+      if (!animate) {
+        // re-enable transition on next frame
+        requestAnimationFrame(() => {
+          if (indicator) indicator.style.transition = "";
+        });
+      }
+    }
+
+    // ── 필터 적용 ─────────────────────────────────────────────────────────
+    function applyFilter(tag: string, pushHistory = true, animate = true) {
+      // 버튼 active 상태 + aria
       btns.forEach(btn => {
-        btn.classList.toggle("active-filter", btn.dataset.tag === tag);
+        const active = btn.dataset.tag === tag;
+        btn.classList.toggle("active-filter", active);
+        btn.setAttribute("aria-selected", String(active));
+        if (active) movePill(btn, animate);
       });
 
-      // URL param 업데이트 (뒤로가기 시 복원)
+      // URL 업데이트
       if (pushHistory) {
         const next = new URLSearchParams(window.location.search);
-        if (tag === "__all__") {
-          next.delete("tag");
-        } else {
-          next.set("tag", tag);
-        }
-        const search = next.toString();
-        history.replaceState(null, "", search ? `?${search}` : window.location.pathname);
+        tag === "__all__" ? next.delete("tag") : next.set("tag", tag);
+        const s = next.toString();
+        history.replaceState(null, "", s ? `?${s}` : window.location.pathname);
       }
 
-      const list = document.querySelector<HTMLElement>("#posts-list");
-      if (list) list.style.opacity = "0";
+      // 카드 필터 + stagger 애니메이션
+      cards.forEach(card => card.classList.remove("animating-in"));
 
       setTimeout(() => {
-        let visible = 0;
+        let stagger = 0;
         cards.forEach(card => {
           const tags: string[] = JSON.parse(card.dataset.tags ?? "[]");
           const show = tag === "__all__" || tags.includes(tag);
-          card.style.display = show ? "" : "none";
-          if (show) visible++;
+          if (show) {
+            card.style.display = "";
+            card.style.setProperty("--stagger", String(stagger++));
+            card.classList.add("animating-in");
+          } else {
+            card.style.display = "none";
+          }
         });
 
         if (noResults) {
-          noResults.classList.toggle("hidden", visible > 0 || tag === "__all__");
+          noResults.classList.toggle("hidden", stagger > 0 || tag === "__all__");
         }
-
-        if (list) list.style.opacity = "1";
-      }, 100);
+      }, animate ? 60 : 0);
     }
 
     btns.forEach(btn => {
-      btn.addEventListener("click", () => {
-        applyFilter(btn.dataset.tag ?? "__all__");
-      });
+      btn.addEventListener("click", () => applyFilter(btn.dataset.tag ?? "__all__"));
     });
 
-    applyFilter(initialTag, false);
+    applyFilter(initialTag, false, false);
   }
 
   initTagFilter();
