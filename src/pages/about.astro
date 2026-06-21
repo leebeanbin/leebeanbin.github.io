@@ -8,9 +8,13 @@ import { resume } from "@/data/resume";
 import { getBadgeUrl } from "@/utils/getBadgeUrl";
 
 const { about, hero } = siteContent;
-const { name, contact } = resume;
+const { name, contact, experience } = resume;
 
 const skillGroups = siteContent.about.skillGroups;
+
+function expAnchor(company: string) {
+  return "exp-" + company.toLowerCase().replace(/[^a-z0-9가-힣]+/g, "-").replace(/^-|-$/g, "");
+}
 ---
 
 <Layout
@@ -111,8 +115,107 @@ const skillGroups = siteContent.about.skillGroups;
       </a>
     </section>
 
-    <!-- 기술 스택 — 카테고리 테이블 그리드 -->
+    <!-- 경력 타임라인 -->
     <section class="mb-12 reveal reveal-delay-2">
+      <h2 class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6">
+        <span class="inline-block size-1.5 rounded-full bg-muted-foreground"></span>
+        <span class="lang-ko">경력</span>
+        <span class="lang-en">Experience</span>
+      </h2>
+
+      <div class="relative">
+        <!-- 수직 연결선 -->
+        <div class="absolute left-[5px] top-2 bottom-6 w-px bg-border" aria-hidden="true"></div>
+
+        <ul class="space-y-0">
+          {experience.map((exp, i) => {
+            const anchor = expAnchor(exp.company);
+            const hasBullets = exp.bullets.some(b => !b.includes("입력해주세요") && !b.includes("Please fill"));
+            return (
+              <li class="exp-item group relative pl-6 pb-7 last:pb-0">
+                <!-- 타임라인 닷 -->
+                <div class="absolute left-0 top-[7px] size-[11px] rounded-full border-2 border-border bg-background group-hover:border-accent group-hover:bg-accent/10 transition-all duration-150" aria-hidden="true"></div>
+
+                <!-- 헤더 행 -->
+                <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 cursor-default">
+                  <div class="flex items-baseline gap-2 flex-wrap">
+                    <a
+                      href={`/resume#${anchor}`}
+                      class="font-semibold text-sm text-foreground hover:text-accent transition-colors"
+                    >
+                      {exp.company}
+                    </a>
+                    <span class="text-xs font-mono text-accent">
+                      {exp.roleEn ? (
+                        <>
+                          <span class="lang-ko">{exp.role}</span>
+                          <span class="lang-en">{exp.roleEn}</span>
+                        </>
+                      ) : exp.role}
+                    </span>
+                  </div>
+                  <span class="text-xs font-mono text-muted-foreground/70 shrink-0">{exp.period}</span>
+                </div>
+
+                <!-- 툴팁: hover 시 표시 (데스크탑), 모바일은 항상 인라인 -->
+                {hasBullets && (
+                  <>
+                    {/* 데스크탑: 호버 툴팁 */}
+                    <div class="exp-tooltip pointer-events-none hidden sm:block
+                                absolute left-5 top-8 z-50 w-80
+                                rounded-xl border border-border bg-background
+                                shadow-[0_8px_30px_rgba(0,0,0,0.10)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)]
+                                p-4 opacity-0 translate-y-1
+                                transition-all duration-150"
+                         aria-hidden="true">
+                      <p class="text-xs font-semibold text-foreground mb-2">
+                        {exp.company} · <span class="text-accent">{exp.roleEn ?? exp.role}</span>
+                      </p>
+                      <ul class="space-y-1.5 mb-3">
+                        {(exp.bulletsEn ?? exp.bullets).slice(0, 4).map(b => (
+                          <li class="text-xs text-muted-foreground flex gap-2">
+                            <span class="text-accent shrink-0">▸</span>
+                            <span>{b}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <div class="flex flex-wrap gap-1 mb-3">
+                        {exp.tags.slice(0, 5).map(tag => (
+                          <img src={getBadgeUrl(tag)} alt={tag} height="18" class="h-[18px] rounded-sm" loading="lazy" decoding="async" />
+                        ))}
+                      </div>
+                      <a href={`/resume#${anchor}`}
+                         class="pointer-events-auto text-xs text-accent hover:underline font-mono">
+                        이력서에서 전체 보기 →
+                      </a>
+                    </div>
+
+                    {/* 모바일: 인라인 축약 불릿 */}
+                    <ul class="sm:hidden mt-1.5 space-y-1">
+                      {(exp.bulletsEn ?? exp.bullets).slice(0, 2).map(b => (
+                        <li class="text-xs text-muted-foreground flex gap-1.5">
+                          <span class="text-accent shrink-0">▸</span>
+                          <span class="line-clamp-1">{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      <a href="/resume" class="inline-flex items-center gap-1 mt-2 text-xs text-muted-foreground hover:text-accent transition-colors font-mono">
+        <span class="lang-ko">전체 이력서 보기</span>
+        <span class="lang-en">Full resume</span>
+        →
+      </a>
+    </section>
+
+    <!-- 기술 스택 — 카테고리 테이블 그리드 -->
+    <section class="mb-12 reveal reveal-delay-3">
       <h2 class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6">
         <span class="inline-block size-1.5 rounded-full bg-muted-foreground"></span>
         <span class="lang-ko">주요 기술</span>
@@ -207,9 +310,52 @@ const skillGroups = siteContent.about.skillGroups;
   "sameAs": [contact.github, contact.linkedin].filter(Boolean),
 })} />
 
+<script>
+  function initExpTooltips() {
+    document.querySelectorAll<HTMLElement>(".exp-item").forEach(item => {
+      const tooltip = item.querySelector<HTMLElement>(".exp-tooltip");
+      if (!tooltip) return;
+
+      let timer: ReturnType<typeof setTimeout>;
+
+      const show = () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          tooltip.classList.add("pointer-events-auto");
+          requestAnimationFrame(() => {
+            tooltip.style.opacity = "1";
+            tooltip.style.transform = "translateY(0)";
+          });
+        }, 180);
+      };
+
+      const hide = () => {
+        clearTimeout(timer);
+        tooltip.style.opacity = "0";
+        tooltip.style.transform = "translateY(4px)";
+        setTimeout(() => tooltip.classList.remove("pointer-events-auto"), 150);
+      };
+
+      item.addEventListener("mouseenter", show);
+      item.addEventListener("mouseleave", hide);
+    });
+  }
+
+  initExpTooltips();
+  document.addEventListener("astro:after-swap", initExpTooltips);
+</script>
+
 <style>
   .stat-card {
     background: var(--background);
+  }
+
+  .exp-tooltip {
+    transform: translateY(4px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .exp-tooltip { transition: none; }
   }
 </style>
 

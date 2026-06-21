@@ -133,8 +133,10 @@ const CATEGORY_COLORS: Record<string, string> = {
           <span class="lang-en">Experience</span>
         </h2>
         <div class="space-y-7">
-          {experience.map(exp => (
-            <div class="relative pl-4 border-l-2 border-border hover:border-accent transition-colors group">
+          {experience.map(exp => {
+            const anchor = "exp-" + exp.company.toLowerCase().replace(/[^a-z0-9가-힣]+/g, "-").replace(/^-|-$/g, "");
+            return (
+            <div id={anchor} class="relative pl-4 border-l-2 border-border hover:border-accent transition-colors group scroll-mt-24">
               <!-- 타임라인 점 -->
               <div class="absolute -left-[5px] top-1.5 size-2 rounded-full bg-border group-hover:bg-accent transition-colors"></div>
 
@@ -197,7 +199,8 @@ const CATEGORY_COLORS: Record<string, string> = {
                 ))}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </section>
     )}
