@@ -5,6 +5,7 @@ import Footer from "@/components/Footer.astro";
 import config from "@/config";
 import { resume } from "@/data/resume";
 import { TECH_COLORS } from "@/data/techColors";
+import { getBadgeUrl } from "@/utils/getBadgeUrl";
 
 const { name, title, photo, summary, summaryEn, contact, experience, education, skills, projects, openSource, certifications, awards } = resume;
 
@@ -215,22 +216,27 @@ function chipStyle(tech: string): string {
         <span class="lang-ko">기술 스택</span>
         <span class="lang-en">Technical Skills</span>
       </h2>
-      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="divide-y divide-border border border-border rounded-xl overflow-hidden">
         {skills.map(group => {
           const catColor = CATEGORY_COLORS[group.category] ?? "#6366F1";
           return (
-            <div
-              class="rounded-xl border border-border p-4 transition-shadow hover:shadow-sm"
-              style={`border-left: 3px solid ${catColor}`}
-            >
-              <p class="text-xs font-bold uppercase tracking-widest mb-2.5" style={`color:${catColor}`}>
+            <div class="flex flex-col sm:flex-row sm:items-start gap-3 px-4 py-3.5">
+              <span
+                class="w-28 shrink-0 text-xs font-bold uppercase tracking-widest pt-1"
+                style={`color:${catColor}`}
+              >
                 {group.category}
-              </p>
-              <div class="flex flex-wrap gap-1.5">
+              </span>
+              <div class="flex flex-wrap gap-1.5 items-center">
                 {group.items.map(item => (
-                  <span class="tech-chip" style={chipStyle(item)}>
-                    {item}
-                  </span>
+                  <img
+                    src={getBadgeUrl(item)}
+                    alt={item}
+                    height="20"
+                    class="h-5 rounded-sm"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 ))}
               </div>
             </div>

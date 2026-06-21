@@ -5,7 +5,7 @@ import Footer from "@/components/Footer.astro";
 import config from "@/config";
 import { siteContent } from "@/data/site";
 import { resume } from "@/data/resume";
-import { TECH_COLORS } from "@/data/techColors";
+import { getBadgeUrl } from "@/utils/getBadgeUrl";
 
 const { about, hero } = siteContent;
 const { name, contact } = resume;
@@ -124,18 +124,17 @@ const skillGroups = siteContent.about.skillGroups;
             <span class="w-24 shrink-0 text-xs font-mono text-muted-foreground/60 uppercase tracking-widest pt-0.5">
               {group.label}
             </span>
-            <div class="flex flex-wrap gap-1.5">
-              {group.items.map(tech => {
-                const color = TECH_COLORS[tech];
-                return (
-                  <span
-                    class="tech-chip"
-                    style={color ? `--chip-color:${color}` : ""}
-                  >
-                    {tech}
-                  </span>
-                );
-              })}
+            <div class="flex flex-wrap gap-1.5 items-center">
+              {group.items.map(tech => (
+                <img
+                  src={getBadgeUrl(tech)}
+                  alt={tech}
+                  height="20"
+                  class="h-5 rounded-sm"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ))}
             </div>
           </div>
         ))}
